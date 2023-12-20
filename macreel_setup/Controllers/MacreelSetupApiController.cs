@@ -298,15 +298,247 @@ namespace macreel_setupwithapi.Controllers
             }
             return Ok(employee_manage);
         }
-        //[HttpGet]
-        //public IHttpActionResult GetEmployeeById(string id)
-        //{
-        //    List<macreel_setup.Models.admin.employee_manage> employee_manage = new List<macreel_setup.Models.admin.employee_manage>();
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult GetEmployeeById(string id)
+        {
+            macreel_setup.Models.admin.employee_manage employee_manage = new macreel_setup.Models.admin.employee_manage();
+            if (id != null && id.ToString() != "")
+            {
+                string strr = "select * from employee_management where id='" + id + "'";
+                DataTable dt = SqlHelper.ExecuteDataset(CommandType.Text, strr).Tables[0];
+                if (dt.Rows.Count > 0)
+                {
+                    employee_manage.id = dt.Rows[0]["id"].ToString();
+                    employee_manage.employee_branch = dt.Rows[0]["employee_branch"].ToString();
+                    employee_manage.employee_type = dt.Rows[0]["employee_type"].ToString();
+                    employee_manage.employee_designation = dt.Rows[0]["employee_designation"].ToString();
+                    employee_manage.employee_id = dt.Rows[0]["employee_id"].ToString();
+                    employee_manage.login_userid = dt.Rows[0]["login_userid"].ToString();
+                    employee_manage.password = dt.Rows[0]["password"].ToString();
+                    employee_manage.employee_first_name = dt.Rows[0]["employee_first_name"].ToString();
+                    employee_manage.employee_last_name = dt.Rows[0]["employee_last_name"].ToString();
+                    employee_manage.mobile_no = dt.Rows[0]["mobile_no"].ToString();
+                    employee_manage.phone_no = dt.Rows[0]["phone_no"].ToString();
+                    employee_manage.gender = dt.Rows[0]["gender"].ToString();
+                    employee_manage.alternate_number = dt.Rows[0]["alternate_number"].ToString();
+                    employee_manage.dob = dt.Rows[0]["dob"].ToString();
+                    employee_manage.join_date = dt.Rows[0]["join_date"].ToString();
+                    employee_manage.salary_ctc = dt.Rows[0]["salary_ctc"].ToString();
+                    employee_manage.qualification = dt.Rows[0]["qualification"].ToString();
+                    employee_manage.aadhar_no = dt.Rows[0]["aadhar_no"].ToString();
+                    employee_manage.pan_no = dt.Rows[0]["pan_no"].ToString();
+                    employee_manage.profile_picture = dt.Rows[0]["profile_picture"].ToString();
+                    employee_manage.country = dt.Rows[0]["country"].ToString();
+                    employee_manage.state = dt.Rows[0]["state"].ToString();
+                    employee_manage.city = dt.Rows[0]["city"].ToString();
+                    employee_manage.area_code = dt.Rows[0]["area_code"].ToString();
+                    employee_manage.address = dt.Rows[0]["address"].ToString();
+                    employee_manage.employee_department = dt.Rows[0]["employee_department"].ToString();
+                    employee_manage.reporting_manager = dt.Rows[0]["reporting_manager"].ToString();
+                    employee_manage.reporting_tl = dt.Rows[0]["reporting_tl"].ToString();
+                    employee_manage.exit_date = dt.Rows[0]["exit_date"].ToString();
+                    employee_manage.current_status = dt.Rows[0]["current_status"].ToString();
+                }
 
-        //    employee_manage = macreel_setup.Admin.employee_management(id);
 
-        //    return Ok(packing_model);
-        //}
+            }
+            return Ok(employee_manage);
+        }
+        [System.Web.Http.HttpPost]
+        //insert : api/EmployeeManagement
+        public IHttpActionResult Insert_Employee()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            try
+            {
+                var emp = new employee_manage()
+                {
+                    employee_branch = httpRequest.Form.Get("employee_branch"),
+                    employee_type = httpRequest.Form.Get("employee_type"),
+                    employee_designation = httpRequest.Form.Get("employee_designation"),
+                    employee_id = httpRequest.Form.Get("employee_id"),
+                    login_userid = httpRequest.Form.Get("login_userid"),
+                    password = httpRequest.Form.Get("password"),
+                    employee_first_name = httpRequest.Form.Get("employee_first_name"),
+                    employee_last_name = httpRequest.Form.Get("employee_last_name"),
+                    mobile_no = httpRequest.Form.Get("mobile_no"),
+                    phone_no = httpRequest.Form.Get("phone_no"),
+                    gender = httpRequest.Form.Get("gender"),
+                    alternate_number = httpRequest.Form.Get("alternate_number"),
+                    dob = httpRequest.Form.Get("dob"),
+                    join_date = httpRequest.Form.Get("join_date"),
+                    salary_ctc = httpRequest.Form.Get("salary_ctc"),
+                    qualification = httpRequest.Form.Get("qualification"),
+                    aadhar_no = httpRequest.Form.Get("aadhar_no"),
+                    pan_no = httpRequest.Form.Get("pan_no"),
+                    profile_picture = httpRequest.Form.Get("profile_picture"),
+                    country = httpRequest.Form.Get("country"),
+                    state = httpRequest.Form.Get("state"),
+                    city = httpRequest.Form.Get("city"),
+                    area_code = httpRequest.Form.Get("area_code"),
+                    address = httpRequest.Form.Get("address"),
+                    employee_department = httpRequest.Form.Get("employee_department"),
+                    reporting_manager = httpRequest.Form.Get("reporting_manager"),
+                    reporting_tl = httpRequest.Form.Get("reporting_tl"),
+                    exit_date = httpRequest.Form.Get("exit_date"),
+                    current_status = httpRequest.Form.Get("current_status")
+                };
+                if (httpRequest.Files.Count > 0)
+                {
+                    var postedFile = httpRequest.Files[0];
+                    //string fileName = Path.GetFileName(emp.fileupload1.FileName);
+                    string filePath = Path.Combine(HttpContext.Current.Server.MapPath("/tempimage/"), postedFile.FileName);
+                    postedFile.SaveAs(filePath);
+                    emp.profile_picture = "/tempimage/" + postedFile.FileName; // Save the file path in the database
+                }
+                SqlCommand cmd = new SqlCommand("sp_UpdateInsertEmployee", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                //cmd.Parameters.AddWithValue("@action", "sp_UpdateInsertEmployee");
+                //cmd.Parameters.AddWithValue("@id", emp.id);
+                cmd.Parameters.AddWithValue("@employee_branch", emp.employee_branch);
+                cmd.Parameters.AddWithValue("@employee_type", emp.employee_type);
+                cmd.Parameters.AddWithValue("@employee_designation", emp.employee_designation);
+                cmd.Parameters.AddWithValue("@employee_id", emp.employee_id);
+                cmd.Parameters.AddWithValue("@login_userid", emp.login_userid);
+                cmd.Parameters.AddWithValue("@password", emp.password);
+                cmd.Parameters.AddWithValue("@employee_first_name", emp.employee_first_name);
+                cmd.Parameters.AddWithValue("@employee_last_name", emp.employee_last_name);
+                cmd.Parameters.AddWithValue("@mobile_no", emp.mobile_no);
+                cmd.Parameters.AddWithValue("@phone_no", emp.phone_no);
+                cmd.Parameters.AddWithValue("@gender", emp.gender);
+                cmd.Parameters.AddWithValue("@alternate_number", emp.alternate_number);
+                cmd.Parameters.AddWithValue("@dob", emp.dob);
+                cmd.Parameters.AddWithValue("@join_date", emp.join_date);
+                cmd.Parameters.AddWithValue("@salary_ctc", emp.salary_ctc);
+                cmd.Parameters.AddWithValue("@qualification", emp.qualification);
+                cmd.Parameters.AddWithValue("@aadhar_no", emp.aadhar_no);
+                cmd.Parameters.AddWithValue("@pan_no", emp.pan_no);
+                cmd.Parameters.AddWithValue("@profile_picture", emp.profile_picture);
+                cmd.Parameters.AddWithValue("@country", emp.country);
+                cmd.Parameters.AddWithValue("@state", emp.state);
+                cmd.Parameters.AddWithValue("@city", emp.city);
+                cmd.Parameters.AddWithValue("@area_code", emp.area_code);
+                cmd.Parameters.AddWithValue("@address", emp.address);
+                cmd.Parameters.AddWithValue("@employee_department", emp.employee_department);
+                cmd.Parameters.AddWithValue("@reporting_manager", emp.reporting_manager);
+                cmd.Parameters.AddWithValue("@reporting_tl", emp.reporting_tl);
+                cmd.Parameters.AddWithValue("@exit_date", emp.exit_date);
+                cmd.Parameters.AddWithValue("@current_status", emp.current_status);
+
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+
+                int i = cmd.ExecuteNonQuery();
+                con.Close();
+                return Ok("success");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error inserting data: " + ex.Message);
+            }
+        }
+        [System.Web.Http.HttpPut]
+        //Update : api/EmployeeManagement/1
+        public IHttpActionResult Update_Employee(string id)
+        {
+            var httpRequest = HttpContext.Current.Request;
+            try
+            {
+                var emp = new employee_manage()
+                {
+                    employee_branch = httpRequest.Form.Get("employee_branch"),
+                    employee_type = httpRequest.Form.Get("employee_type"),
+                    employee_designation = httpRequest.Form.Get("employee_designation"),
+                    employee_id = httpRequest.Form.Get("employee_id"),
+                    login_userid = httpRequest.Form.Get("login_userid"),
+                    password = httpRequest.Form.Get("password"),
+                    employee_first_name = httpRequest.Form.Get("employee_first_name"),
+                    employee_last_name = httpRequest.Form.Get("employee_last_name"),
+                    mobile_no = httpRequest.Form.Get("mobile_no"),
+                    phone_no = httpRequest.Form.Get("phone_no"),
+                    gender = httpRequest.Form.Get("gender"),
+                    alternate_number = httpRequest.Form.Get("alternate_number"),
+                    dob = httpRequest.Form.Get("dob"),
+                    join_date = httpRequest.Form.Get("join_date"),
+                    salary_ctc = httpRequest.Form.Get("salary_ctc"),
+                    qualification = httpRequest.Form.Get("qualification"),
+                    aadhar_no = httpRequest.Form.Get("aadhar_no"),
+                    pan_no = httpRequest.Form.Get("pan_no"),
+                    profile_picture = httpRequest.Form.Get("profile_picture"),
+                    country = httpRequest.Form.Get("country"),
+                    state = httpRequest.Form.Get("state"),
+                    city = httpRequest.Form.Get("city"),
+                    area_code = httpRequest.Form.Get("area_code"),
+                    address = httpRequest.Form.Get("address"),
+                    employee_department = httpRequest.Form.Get("employee_department"),
+                    reporting_manager = httpRequest.Form.Get("reporting_manager"),
+                    reporting_tl = httpRequest.Form.Get("reporting_tl"),
+                    exit_date = httpRequest.Form.Get("exit_date"),
+                    current_status = httpRequest.Form.Get("current_status")
+                };
+                if (httpRequest.Files.Count > 0)
+                {
+                    var postedFile = httpRequest.Files[0];
+                    //string fileName = Path.GetFileName(emp.fileupload1.FileName);
+                    string filePath = Path.Combine(HttpContext.Current.Server.MapPath("/tempimage/"), postedFile.FileName);
+                    postedFile.SaveAs(filePath);
+                    emp.profile_picture = "/tempimage/" + postedFile.FileName; // Save the file path in the database
+                }
+                SqlCommand cmd = new SqlCommand("sp_UpdateInsertEmployee", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                //cmd.Parameters.AddWithValue("@action", "sp_UpdateInsertEmployee");
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@employee_branch", emp.employee_branch);
+                cmd.Parameters.AddWithValue("@employee_type", emp.employee_type);
+                cmd.Parameters.AddWithValue("@employee_designation", emp.employee_designation);
+                cmd.Parameters.AddWithValue("@employee_id", emp.employee_id);
+                cmd.Parameters.AddWithValue("@login_userid", emp.login_userid);
+                cmd.Parameters.AddWithValue("@password", emp.password);
+                cmd.Parameters.AddWithValue("@employee_first_name", emp.employee_first_name);
+                cmd.Parameters.AddWithValue("@employee_last_name", emp.employee_last_name);
+                cmd.Parameters.AddWithValue("@mobile_no", emp.mobile_no);
+                cmd.Parameters.AddWithValue("@phone_no", emp.phone_no);
+                cmd.Parameters.AddWithValue("@gender", emp.gender);
+                cmd.Parameters.AddWithValue("@alternate_number", emp.alternate_number);
+                cmd.Parameters.AddWithValue("@dob", emp.dob);
+                cmd.Parameters.AddWithValue("@join_date", emp.join_date);
+                cmd.Parameters.AddWithValue("@salary_ctc", emp.salary_ctc);
+                cmd.Parameters.AddWithValue("@qualification", emp.qualification);
+                cmd.Parameters.AddWithValue("@aadhar_no", emp.aadhar_no);
+                cmd.Parameters.AddWithValue("@pan_no", emp.pan_no);
+                cmd.Parameters.AddWithValue("@profile_picture", emp.profile_picture);
+                cmd.Parameters.AddWithValue("@country", emp.country);
+                cmd.Parameters.AddWithValue("@state", emp.state);
+                cmd.Parameters.AddWithValue("@city", emp.city);
+                cmd.Parameters.AddWithValue("@area_code", emp.area_code);
+                cmd.Parameters.AddWithValue("@address", emp.address);
+                cmd.Parameters.AddWithValue("@employee_department", emp.employee_department);
+                cmd.Parameters.AddWithValue("@reporting_manager", emp.reporting_manager);
+                cmd.Parameters.AddWithValue("@reporting_tl", emp.reporting_tl);
+                cmd.Parameters.AddWithValue("@exit_date", emp.exit_date);
+                cmd.Parameters.AddWithValue("@current_status", emp.current_status);
+
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+
+                int i = cmd.ExecuteNonQuery();
+                con.Close();
+                return Ok("success");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error inserting data: " + ex.Message);
+            }
+        }
+        [System.Web.Http.HttpDelete]
+        //Get : api/EmployeeManagement/1
+        public IHttpActionResult Delete_Employee(string id)
+        {
+            string str = "delete from employee_management where id='" + id + "'";
+
+            SqlHelper.ExecuteNonQuery(CommandType.Text, str);
+            return Ok("Success");
+        }
     }
     public class ManageSequenceNoController : ApiController
     {
@@ -1493,6 +1725,53 @@ namespace macreel_setupwithapi.Controllers
         public SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myconn"].ConnectionString);
         macreel_setup.Models.admin.DataServices db = new macreel_setup.Models.admin.DataServices();
         [HttpGet]
+        //Get : api/ManageQuotation
+        public IHttpActionResult Get_Quotation()
+        {
+            List<manage_quotation> pro = new List<manage_quotation>();
+            con.Open();
+            SqlCommand cmd = new SqlCommand("sp_Quotation", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Action", "selectQuotation");
+            SqlDataReader sdr = cmd.ExecuteReader();
+            manage_quotation quot;
+            if (sdr.HasRows)
+            {
+                while(sdr.Read())
+                {
+                    quot=new manage_quotation();
+                    quot.id = sdr["Id"].ToString();
+                    quot.Quotation_No = sdr["Quotation_No"].ToString();
+                    quot.Lead_Reference = sdr["Lead_Reference"].ToString();
+                    quot.Client_Name = sdr["Client_Name"].ToString();
+                    quot.Contact_Person_No = sdr["Contact_Person_No"].ToString();
+                    quot.Email = sdr["Email"].ToString();
+                    quot.Company_Number = sdr["Company_Number"].ToString();
+                    quot.Address = sdr["Address"].ToString();
+                    quot.Employee = sdr["Employee"].ToString();
+                    quot.Branch = sdr["Branch"].ToString();
+                    quot.Select_Bill_TO = sdr["Select_Bill_TO"].ToString();
+                    quot.Date = sdr["Date"].ToString();
+                    quot.Select_Ship_TO = sdr["Select_Ship_TO"].ToString();
+                    quot.Add_PORNo = sdr["Add_PORNo"].ToString();
+                    quot.LAN_ID = sdr["LAN_ID"].ToString();
+                    quot.PromoCode = sdr["PromoCode"].ToString();
+                    quot.DomainID = sdr["DomainID"].ToString();
+                    quot.InState_OutState = sdr["InState_OutState"].ToString();
+                    quot.Tax = sdr["Tax"].ToString();
+                    quot.TAX_Amount = sdr["TAX_Amount"].ToString();
+                    quot.Price_Before_TAX = sdr["Price_Before_TAX"].ToString();
+                    quot.Price_After_TAX = sdr["Price_After_TAX"].ToString();
+                    quot.Generated_Date = sdr["Generated_Date"].ToString();
+                    pro.Add(quot);
+                }
+               
+            }
+            sdr.Close();
+            con.Close();
+            return Ok(pro);
+        }
+        [HttpGet]
         // Get : api/ManageQuotation
         public IHttpActionResult Get_QuotationlistGeneratedBy(string lodinId)
         {
@@ -1667,6 +1946,164 @@ namespace macreel_setupwithapi.Controllers
         public IHttpActionResult DeleteQuotation(string id)
         {
             db.delete_Quotation(id);
+            return Ok("Success");
+        }
+    }
+    public class ManageLeadSheetController : ApiController
+    {
+        public SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myconn"].ConnectionString);
+        macreel_setup.Models.admin.DataServices db = new macreel_setup.Models.admin.DataServices();
+        [HttpGet]
+        //Get : api/ManageLeadSheet
+        public IHttpActionResult Get_leadsheetlist(string usertype, string loginId)
+        {
+            List<manage_leadsheet> leadsheet = new List<manage_leadsheet>();
+            leadsheet = db.getleadsheetlist(usertype, loginId);
+            return Ok(leadsheet);
+        }
+        [HttpGet]
+        //Get : api/ManageLeadSheet
+        public IHttpActionResult GetAllAssignedLeadList(string loginId)
+        {
+            List<lead_mangement> assinLeadList = new List<lead_mangement>();
+            assinLeadList = db.GetAllAssignedLeadList(loginId);
+            return Ok(assinLeadList);
+        }
+        [HttpGet]
+        //Get : api/ManageLeadSheet
+        public IHttpActionResult Get_allLeadForAssign()
+        {
+            List<manage_leadsheet> leadsheet = new List<manage_leadsheet>();
+            con.Open();
+            SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Action", "getallLeadForAssign");
+            SqlDataReader sdr = cmd.ExecuteReader();
+            manage_leadsheet lead = new manage_leadsheet();
+            if (sdr.HasRows)
+            {
+                while (sdr.Read())
+                {
+                    lead = new manage_leadsheet();
+                    lead.id = sdr["id"].ToString();
+                    lead.client_name = sdr["client_name"].ToString();
+                    lead.contact_no = sdr["contact_no"].ToString();
+                    lead.eMAIL_ID = sdr["eMAIL_ID"].ToString();
+                    lead.address = sdr["address"].ToString();
+                    lead.contactperson = sdr["contactperson"].ToString();
+                    lead.productname = sdr["productname"].ToString();
+                    lead.uploadedby = sdr["uploadedby"].ToString();
+                    lead.generateStatus = sdr["generateStatus"].ToString();
+                    leadsheet.Add(lead);
+                }
+
+            }
+            con.Close();
+            return Ok(leadsheet);
+        }
+        [HttpGet]
+        //Get : api/ManageLeadSheet/1
+        public IHttpActionResult Get_LeadsheetById(string id)
+        {
+            List<manage_leadsheet> leadsheet = new List<manage_leadsheet>();
+            leadsheet = db.getleadsheetById(id);
+            return Ok(leadsheet);
+        }
+        [HttpPost]
+        //Insert : api/ManageLeadSheet
+        public IHttpActionResult Insert_addmanualyleadBySalesman()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            try
+            {
+
+                var lead = new manage_leadsheet()
+                {
+                    client_name = httpRequest.Form.Get("client_name"),
+                    contact_no = httpRequest.Form.Get("contact_no"),
+                    eMAIL_ID = httpRequest.Form.Get("eMAIL_ID"),
+                    address = httpRequest.Form.Get("address"),
+                    contactperson = httpRequest.Form.Get("contactperson"),
+                    productname = httpRequest.Form.Get("productname"),
+                    uploadedby = httpRequest.Form.Get("uploadedby"),
+                    uploadedbytype = httpRequest.Form.Get("uploadedbytype")
+
+                };
+                SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Action", "insert_leadsheet");
+                cmd.Parameters.AddWithValue("@id", lead.id);
+                cmd.Parameters.AddWithValue("@client_name", lead.client_name);
+                cmd.Parameters.AddWithValue("@contact_no", lead.contact_no);
+                cmd.Parameters.AddWithValue("@eMAIL_ID", lead.eMAIL_ID);
+                cmd.Parameters.AddWithValue("@address", lead.address);
+                cmd.Parameters.AddWithValue("@contactperson", lead.contactperson);
+                cmd.Parameters.AddWithValue("@productname", lead.productname);
+                cmd.Parameters.AddWithValue("@uploadedby", lead.uploadedby);
+                cmd.Parameters.AddWithValue("@uploadedbytype", lead.uploadedbytype);
+                cmd.Parameters.AddWithValue("@generateStatus", 0);
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+
+                int i = cmd.ExecuteNonQuery();
+                con.Close();
+                return Ok("success");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error inserting data: " + ex.Message);
+            }
+        }
+        [HttpPut]
+        //Update : api/ManageLeadSheet/1
+        public IHttpActionResult Update_addmanualyleadBySalesman(string id)
+        {
+            var httpRequest = HttpContext.Current.Request;
+            try
+            {
+
+                var lead = new manage_leadsheet()
+                {
+                    client_name = httpRequest.Form.Get("client_name"),
+                    contact_no = httpRequest.Form.Get("contact_no"),
+                    eMAIL_ID = httpRequest.Form.Get("eMAIL_ID"),
+                    address = httpRequest.Form.Get("address"),
+                    contactperson = httpRequest.Form.Get("contactperson"),
+                    productname = httpRequest.Form.Get("productname"),
+                    uploadedby = httpRequest.Form.Get("uploadedby"),
+                    uploadedbytype = httpRequest.Form.Get("uploadedbytype")
+
+                };
+                SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Action", "updateLeadbyId");
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@client_name", lead.client_name);
+                cmd.Parameters.AddWithValue("@contact_no", lead.contact_no);
+                cmd.Parameters.AddWithValue("@eMAIL_ID", lead.eMAIL_ID);
+                cmd.Parameters.AddWithValue("@address", lead.address);
+                cmd.Parameters.AddWithValue("@contactperson", lead.contactperson);
+                cmd.Parameters.AddWithValue("@productname", lead.productname);
+                cmd.Parameters.AddWithValue("@uploadedby", lead.uploadedby);
+                cmd.Parameters.AddWithValue("@uploadedbytype", lead.uploadedbytype);
+                cmd.Parameters.AddWithValue("@generateStatus", 0);
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+
+                int i = cmd.ExecuteNonQuery();
+                con.Close();
+                return Ok("success");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error inserting data: " + ex.Message);
+            }
+        }
+        [HttpDelete]
+        //Delete : api/ManageLeadSheet/1
+        public IHttpActionResult delete_leadBySalesman(string id)
+        {
+            db.delete_leadBySalesman(id);
             return Ok("Success");
         }
     }
