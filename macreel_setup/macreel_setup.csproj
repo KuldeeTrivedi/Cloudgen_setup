@@ -2378,6 +2378,7 @@
     <Content Include="Views\Setup\view_companysetup.cshtml" />
     <Content Include="Views\Shared\admin_mst.cshtml" />
     <Content Include="Views\Shared\NotFound.cshtml" />
+    <Content Include="Views\Admin\viewleadstatus.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

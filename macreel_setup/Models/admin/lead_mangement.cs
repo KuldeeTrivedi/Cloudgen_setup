@@ -49,4 +49,24 @@ namespace macreel_setup.Models.admin
         public string employee_id { get; set; }
 
     }
+
+    public class leadstatusmodel
+    {
+        public string leadId { get; set; }
+        public string Client { get; set; }
+        public string contac_no { get; set; }
+        public string product { get; set; }
+        public string response { get; set; }
+        public string assignTo { get; set; }
+        public string assignby { get; set; }
+        public string next_follow_up_date { get; set; }
+        public string status { get; set; }
+        public string ContactPerson { get; set; }
+        public string client { get; set; }
+        public string contactemail { get; set; }
+
+    }
+
+
+
 }

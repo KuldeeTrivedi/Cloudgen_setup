@@ -21,8 +21,8 @@ namespace macreel_setup.Controllers
     {
         public SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myconn"].ConnectionString);
 
-        Models.admin.DataServices db=new Models.admin.DataServices();
-        
+        Models.admin.DataServices db = new Models.admin.DataServices();
+
 
 
         public ActionResult Login()
@@ -130,7 +130,7 @@ namespace macreel_setup.Controllers
                 string url = Request.Url.PathAndQuery;
                 return Redirect("/admin/login?url=" + HttpUtility.UrlEncode(url) + "");
             }
-            
+
             return View();
         }
 
@@ -654,7 +654,7 @@ namespace macreel_setup.Controllers
                 para[30] = new SqlParameter("@action", SqlDbType.NVarChar);
                 para[30].Value = "insertLead";
             }
-            
+
 
 
             SqlHelper.ExecuteNonQuery(CommandType.StoredProcedure, "sp_InsertOrUpdateLead", para);
@@ -679,7 +679,7 @@ namespace macreel_setup.Controllers
             var loginId = Session["employeeId"].ToString();
             // string sql = "select * from LeadTable order by id";
             string sql = "";
-           if (logintype=="admin")
+            if (logintype == "admin")
             {
                 sql = "select * from LeadTable order by id ";
 
@@ -749,7 +749,7 @@ namespace macreel_setup.Controllers
 
 
 
-      
+
 
         #region Manage Branch
 
@@ -764,7 +764,7 @@ namespace macreel_setup.Controllers
 
             macreel_setup.Models.admin.manage_branch manage_branch = new macreel_setup.Models.admin.manage_branch();
 
-           
+
             if (id != null && id.ToString() != "")
             {
                 string strr = "select * from manage_branch where id='" + id + "'";
@@ -801,7 +801,7 @@ namespace macreel_setup.Controllers
         public ActionResult insert_branch(macreel_setup.Models.admin.manage_branch manage_branch)
         {
             macreel_setup.App_Code.basic_function basic_function = new macreel_setup.App_Code.basic_function();
-            
+
             Models.common_response Response = basic_function.manage_branch(manage_branch);
 
 
@@ -1354,7 +1354,7 @@ namespace macreel_setup.Controllers
 
         public ActionResult add_quotation(string LeadId, string id)
         {
-           
+
 
             ViewBag.LeadId = LeadId;
 
@@ -1374,7 +1374,7 @@ namespace macreel_setup.Controllers
                 quot.Lead_Reference = leadForQuot.LeadID;
                 quot.Address = leadForQuot.Address;
                 quot.Date = leadForQuot.LeadGenerationDate;
-               
+
             }
 
             if (id != null && id != "")
@@ -1404,7 +1404,7 @@ namespace macreel_setup.Controllers
         //    }
 
         //   // var leadforQuotes = db.getassingedLeadByLeadId(LeadId);
-            
+
 
         //    return Json(leadForQuot, JsonRequestBehavior.AllowGet);
 
@@ -1415,7 +1415,7 @@ namespace macreel_setup.Controllers
         {
             var loginId = Session["employeeId"];
             var sendermail = Session["loginuseremail"].ToString();
-            var recipientmail=quot.Email.ToString();
+            var recipientmail = quot.Email.ToString();
             quot.GeneratedBy = loginId.ToString();
             var dd = db.insert_Quotation(quot);
 
@@ -1424,16 +1424,16 @@ namespace macreel_setup.Controllers
             MailMessage mail = new MailMessage();
 
             // Set the sender address
-           // mail.From = new MailAddress(sendermail);
-           // mail.From = new MailAddress("udayprakash2895@gmail.com");
+            // mail.From = new MailAddress(sendermail);
+            // mail.From = new MailAddress("udayprakash2895@gmail.com");
 
             // Set the recipient address
-          //  mail.To.Add(new MailAddress(recipientmail));
+            //  mail.To.Add(new MailAddress(recipientmail));
             mail.To.Add(new MailAddress("udayprakash2895@gmail.com"));
 
             // Set the subject and body of the email
             mail.Subject = "Quotation Generated";
-            mail.Body = "hello " + quot.Client_Name + " your quotation  generated and this is your quotation number "+quot.Quotation_No+"quotation created by :-"+ sendermail;
+            mail.Body = "hello " + quot.Client_Name + " your quotation  generated and this is your quotation number " + quot.Quotation_No + "quotation created by :-" + sendermail;
 
             // Create SmtpClient and send the email
             using (SmtpClient smtpClient = new SmtpClient())
@@ -1513,9 +1513,9 @@ namespace macreel_setup.Controllers
         public ActionResult addleadsheet(HttpPostedFileBase excelFile)
         {
 
-           // Session["usertype"];
-           var leaduploadedby= Session["employeeId"].ToString();
-           var leaduploadedbytype= Session["usertype"].ToString();
+            // Session["usertype"];
+            var leaduploadedby = Session["employeeId"].ToString();
+            var leaduploadedbytype = Session["usertype"].ToString();
 
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
 
@@ -1525,7 +1525,7 @@ namespace macreel_setup.Controllers
 
                 string fileExtension = Path.GetExtension(excelFile.FileName);
 
-               
+
 
                 if (fileExtension == ".xlsx")
                 {
@@ -1535,24 +1535,24 @@ namespace macreel_setup.Controllers
 
                         for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                         {
-                          
+
 
 
                             leadsheet.Add(new macreel_setup.Models.admin.manage_leadsheet
                             {
-                                client_name = worksheet.Cells[row, 1].Value.ToString(),                              
+                                client_name = worksheet.Cells[row, 1].Value.ToString(),
                                 contact_no = worksheet.Cells[row, 2].Value.ToString(),
                                 eMAIL_ID = worksheet.Cells[row, 3].Value.ToString(),
                                 address = worksheet.Cells[row, 4].Value.ToString(),
                                 productname = worksheet.Cells[row, 5].Value.ToString(),
                                 contactperson = worksheet.Cells[row, 6].Value.ToString(),
-                         
+
 
                             });
                         }
                     }
                 }
-                
+
                 con.Open();
                 foreach (var lead in leadsheet)
                 {
@@ -1569,7 +1569,7 @@ namespace macreel_setup.Controllers
                     cmd.Parameters.AddWithValue("@uploadedby", leaduploadedby);
                     cmd.Parameters.AddWithValue("@uploadedbytype", leaduploadedbytype);
                     cmd.Parameters.AddWithValue("@generateStatus", 0);
-                  
+
                     cmd.Parameters.AddWithValue("@Action", "insert_leadsheet");
 
 
@@ -1587,14 +1587,14 @@ namespace macreel_setup.Controllers
 
         }
 
-      
+
 
         public ActionResult viewleadsheetlist()
         {
-           var loginId= Session["employeeId"].ToString();
-            var usertype = Session["usertype"].ToString();
+            //  var loginId= Session["employeeId"].ToString();
+            // var usertype = Session["usertype"].ToString();
             List<manage_leadsheet> leadsheetlist = new List<manage_leadsheet>();
-            leadsheetlist = db.getleadsheetlist(usertype, loginId);
+            leadsheetlist = db.getleadsheetlist();
             return View(leadsheetlist);
         }
         //add lead manualy
@@ -1620,7 +1620,7 @@ namespace macreel_setup.Controllers
         {
             leadObj.uploadedby = Session["employeeId"].ToString();
             leadObj.uploadedbytype = Session["usertype"].ToString();
-           
+
             db.addmanualyleadBySalesman(leadObj);
             return RedirectToAction("viewleadsheetlist");
         }
@@ -1631,12 +1631,12 @@ namespace macreel_setup.Controllers
 
 
             var newlead = db.getleadsheetById(id).FirstOrDefault();
-           
 
-                db.generatenewLeadBySalesman(newlead);
-            var leadId=db.getgeneratedleadById(id).FirstOrDefault(); 
 
-            return RedirectToAction("lead_management", "Admin", new {id= leadId.id});
+            db.generatenewLeadBySalesman(newlead);
+            var leadId = db.getgeneratedleadById(id).FirstOrDefault();
+
+            return RedirectToAction("lead_management", "Admin", new { id = leadId.id });
         }
 
 
@@ -1658,7 +1658,7 @@ namespace macreel_setup.Controllers
             agentlist = db.getAgentList();
 
             ViewBag.AgentList = agentlist;
-  
+
 
             return View();
         }
@@ -1680,17 +1680,17 @@ namespace macreel_setup.Controllers
         }
 
         [HttpPost]
-        public ActionResult AssignLeadTo(string agentId,string selectRows)
+        public ActionResult AssignLeadTo(string agentId, string selectRows)
         {
 
 
-           // List<assignLead> assignLeadList = new List<assignLead>();
+            // List<assignLead> assignLeadList = new List<assignLead>();
 
-            var assignLead=new assignLead();
+            var assignLead = new assignLead();
 
             assignLead.agentId = agentId;
 
-       //     string s = "a,b, b, c";
+            //     string s = "a,b, b, c";
 
             string[] values = selectRows.Split(',');
             for (int i = 0; i < values.Length; i++)
@@ -1724,12 +1724,12 @@ namespace macreel_setup.Controllers
 
             List<lead_mangement> assingedleadlist = new List<lead_mangement>();
             assingedleadlist = db.GetAllAssignedLeadList(loginId);
-            
+
             return View(assingedleadlist);
         }
         //edit by salesteam
         [HttpPost]
-        public ActionResult reAssignLead(string agentId,string LeadId)
+        public ActionResult reAssignLead(string agentId, string LeadId)
         {
 
 
@@ -1740,18 +1740,18 @@ namespace macreel_setup.Controllers
 
             db.assignLeadToAgent(assignLead);
 
-            return Json(assignLead,JsonRequestBehavior.AllowGet);
+            return Json(assignLead, JsonRequestBehavior.AllowGet);
         }
         //view assign lead details
         public ActionResult viewAssignedLeadByLeadId(string leadId)
         {
             var assignedLead = db.getassingedLeadByLeadId(leadId);
-            return Json(assignedLead,JsonRequestBehavior.AllowGet);
+            return Json(assignedLead, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult AgentPannel()
         {
-            
+
             return View();
 
         }
@@ -1767,10 +1767,10 @@ namespace macreel_setup.Controllers
         public ActionResult view_assignedlead()
         {
             int loginId = Convert.ToInt32(Session["employeeId"]);
-          //  Session["AgentId"] = id;
+            //  Session["AgentId"] = id;
             //get reporting manager
             //getreportedManager
-          //  var repmanager = db.getreportedManager(id);
+            //  var repmanager = db.getreportedManager(id);
 
             //Session["managerId"] = repmanager.report_manager_Id;
             //Session["managername"] = repmanager.report_manager;
@@ -1782,13 +1782,13 @@ namespace macreel_setup.Controllers
             //List<SelectListItem> reAssignList = new List<SelectListItem>();
             //reAssignList = db.getAgentList();
 
-           
+
 
 
             List<macreel_setup.Models.admin.employe_list> employe_list = new List<macreel_setup.Models.admin.employe_list>();
 
 
-            string str = "select * from employee_management where employee_id NOT IN ("+ loginId+")";
+            string str = "select * from employee_management where employee_id NOT IN (" + loginId + ")";
             DataSet ds = SqlHelper.ExecuteDataset(CommandType.Text, str);
 
 
@@ -1805,23 +1805,23 @@ namespace macreel_setup.Controllers
             }
 
             ViewBag.ReAssigemploye_list = employe_list;
-           // lead_mangement.employe_list = employe_list;
+            // lead_mangement.employe_list = employe_list;
 
 
 
 
-            List<lead_mangement> assignLead= new List<lead_mangement>();
+            List<lead_mangement> assignLead = new List<lead_mangement>();
 
             assignLead = db.getAllLeadAssignToAgent(loginId);
 
-      
+
 
             return View(assignLead);
 
         }
 
 
-        public ActionResult FollowUpLeadResponse (string  leadId,string resId)
+        public ActionResult FollowUpLeadResponse(string leadId, string resId)
         {
 
             var AgentId = Session["employeeId"].ToString();
@@ -1852,7 +1852,7 @@ namespace macreel_setup.Controllers
         public ActionResult insertFollowUpLeadResponse(manage_folloupLeadResponse obj)
         {
 
-          db.insertfolloupLeadResponse(obj);
+            db.insertfolloupLeadResponse(obj);
 
             //List<lead_mangement> assignLead = new List<lead_mangement>();
             var LeadId = obj.LeadId;
@@ -1866,11 +1866,12 @@ namespace macreel_setup.Controllers
         }
 
 
+
         public ActionResult viewleadFollowUpresponse(string id)
         {
             var obj = db.getfollowUpLeadResponse(id);
 
-            return Json(obj,JsonRequestBehavior.AllowGet);
+            return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult next_followup_responseNotification()
@@ -1909,8 +1910,23 @@ namespace macreel_setup.Controllers
 
         }
 
+        public ActionResult viewleadstatus()
+        {
+            List<leadstatusmodel> statuslist = new List<leadstatusmodel>();
+            statuslist = db.viewleadstatus();
+            return View(statuslist);
+        }
 
 
+        public ActionResult viewresponsebyleadId(string LeadId)
+        {
+
+            var response = db.getfollowUpLeadResponse(LeadId);
+
+
+            return Json(response, JsonRequestBehavior.AllowGet);
+
+        }
 
         #endregion
 
@@ -1918,9 +1934,9 @@ namespace macreel_setup.Controllers
 
         #region countrystatecitybind
 
-        public  void countrybind()
+        public void countrybind()
         {
-            List<SelectListItem> countrylist= new List<SelectListItem>();
+            List<SelectListItem> countrylist = new List<SelectListItem>();
 
             string str = "select * from tbl_countrybind ";
             DataSet ds = SqlHelper.ExecuteDataset(CommandType.Text, str);
@@ -1945,7 +1961,7 @@ namespace macreel_setup.Controllers
 
             List<SelectListItem> statelist = new List<SelectListItem>();
 
-            string str = "select * from tbl_state where country_id="+ countryId;
+            string str = "select * from tbl_state where country_id=" + countryId;
             DataSet ds = SqlHelper.ExecuteDataset(CommandType.Text, str);
 
 
