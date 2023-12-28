@@ -68,6 +68,7 @@
                                         <tr class="bg-info">
                                             <th>Sr.No.</th>
                                             <th>Client Name</th>
+                                            <th>Contact Person</th>
                                             <th>Contact No</th>
                                             <th>Email</th>
                                             <th>Address</th>
@@ -85,6 +86,7 @@
 
                                                 <tr>
                                                     <td>@i</td>
+                                                    <td class="client">@item.Client</td>
                                                     <td class="contactperson">@item.ContactPerson</td>
                                                     <td class="mobno">@item.ContactMobileNumber</td>
                                                     <td class="email">@item.ContactEmail</td>
@@ -93,7 +95,7 @@
                                                     <td class="hidden">@item.LeadAssignedTo</td>
                                                     @if (item.LeadStatus == "1")
                                                     {
-                                                        <td><a href="/admin/viewleaddeatailById?leadId=@(item.LeadID)" class="btn btn-sm showdetail"><i class="fas fa-eye"></i></a>||<a href="/admin/add_quotation?leadId=@(item.LeadID)"><span class="btn btn-success PO">Quotation </span></a> </td>
+                                                        <td><a href="/admin/viewleaddeatailById?leadId=@(item.LeadID)" class="btn btn-sm showdetail"><i class="fas fa-eye showleaddetail "></i></a>||<a href="/admin/add_quotation?leadId=@(item.LeadID)"><span class="btn btn-success PO">Quotation </span></a> || <span class="transferToReportManager"> <i class="fa fa-share-square leadtransferTo" aria-hidden="true"></i></span></td>
 
 
 
@@ -101,7 +103,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <td><a href="/admin/viewleaddeatailById?leadId=@(item.LeadID)" class="btn btn-sm showdetail"><i class="fas fa-eye"></i></a>||<a href="/admin/FollowUpLeadResponse?leadId=@(item.LeadID)"><span class="followup"> <i class="fa fa-rocket" aria-hidden="true"></i></span></a>|| <span class="transferToReportManager"> <i class="fa fa-share-square" aria-hidden="true"></i></span> </td>
+                                                        <td><a href="/admin/viewleaddeatailById?leadId=@(item.LeadID)" class="btn btn-sm showdetail"><i class="fas fa-eye showleaddetail"></i></a>||<a href="/admin/FollowUpLeadResponse?leadId=@(item.LeadID)"><span class="followup"> <i class="fa fa-rocket followupwithclient" aria-hidden="true"></i></span></a>|| <span class="transferToReportManager"> <i class="fa fa-share-square leadtransferTo" aria-hidden="true"></i></span> </td>
 
                                                     }
                                                 </tr>
@@ -175,7 +177,7 @@
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">transfer to report manager</h4>
+                <h4 class="modal-title"> Lead Transfer </h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
@@ -213,7 +215,7 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <select class="form-control sn-required" name="employee_id">
-                                        <option value="">--Select Agent--</option>
+                                        <option value="">--Select Employee--</option>
                                         @if (ViewBag.ReAssigemploye_list != null)
                                         {
                                             foreach (var item in ViewBag.ReAssigemploye_list as List<macreel_setup.Models.admin.employe_list>)
@@ -285,8 +287,9 @@
 
             var currentRow = $(this).closest("tr");
 
-            var clientName = currentRow.find("td:eq(0)").html();
-            var LeadId = currentRow.find("td:eq(5)").html();
+            var clientName = currentRow.find("td:eq(1)").html();
+            var LeadId = currentRow.find("td:eq(6)").html();
+            // alert(LeadId)
             $('#LeadId').val(LeadId);
 
             $('#assigntransferModal').modal('show');
@@ -348,7 +351,7 @@
 
 
 <script>
-   
+
     $(document).ready(function () {
 
 
@@ -369,7 +372,7 @@
 
                     $.each(data, function (index, item) {
                         // alert(index);
-                        if (index != 'id' && index != 'employee_first_name' && index != 'countrylist' && index != 'employe_list' && index != 'LeadStatus' && index != 'LeadAssignedTo' && index != 'Client') {
+                        if (index != 'id' && index != 'employee_first_name' && index != 'LeadID' && index != 'countrylist' && index != 'employe_list' && index != 'LeadStatus' && index != 'assignStatus') {
                             tableHTML += '<tr>';
                             tableHTML += '<th>' + index.replace(/#|_/g, ' ') + ': </th>';
                             tableHTML += '<td>' + item + '</td>';
@@ -390,6 +393,30 @@
 
             // alert(action);
         });
+
+
+
+
+        $(".followupwithclient").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Follow Up With Client');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
+
+        $(".leadtransferTo").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Click For Lead Transfer');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
+
+        $(".showleaddetail").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Show Details');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
     });
 
 </script>

@@ -359,10 +359,16 @@
                                             <p>Add Lead</p>
                                         </a>
                                     </li>
+                                    @*<li class="nav-item">
+                        <a href="/admin/view_lead" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>View Lead</p>
+                        </a>
+                    </li>*@
                                     <li class="nav-item">
-                                        <a href="/admin/view_lead" class="nav-link">
+                                        <a href="/admin/viewleadstatus" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>View Lead</p>
+                                            <p>Lead Status</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -577,11 +583,11 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     @*<li class="nav-item">
-                                            <a href="/admin/add_quotation" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>add_quotation</p>
-                                            </a>
-                                        </li>*@
+                        <a href="/admin/add_quotation" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>add_quotation</p>
+                        </a>
+                    </li>*@
                                     <li class="nav-item">
                                         <a href="/admin/view_quotation" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
@@ -650,33 +656,38 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
-
+                                    <li class="nav-item">
+                                        <a href="/admin/viewleadsheetlist" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>View Assigned Lead & Generate </p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/view_assignedlead" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p> Follow UP Lead</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a href="/admin/addLeadManualyBySalesMan" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Add Lead</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="/admin/view_lead" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>View Lead</p>
-                                        </a>
-                                    </li>
+                                    @*<li class="nav-item">
+                        <a href="/admin/view_lead" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>View Lead</p>
+                        </a>
+                    </li>*@
 
                                     @*<li class="nav-item">
-                                            <a href="/admin/addleadsheet" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Upload LeadSheet</p>
-                                            </a>
-                                        </li>*@
+                        <a href="/admin/addleadsheet" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Upload LeadSheet</p>
+                        </a>
+                    </li>*@
 
-                                    <li class="nav-item">
-                                        <a href="/admin/viewleadsheetlist" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>view leadsheet list</p>
-                                        </a>
-                                    </li>
 
                                     <li class="nav-item">
                                         <a href="/admin/AssignLead" class="nav-link">
@@ -684,16 +695,40 @@
                                             <p>Assign Lead</p>
                                         </a>
                                     </li>
+
                                     <li class="nav-item">
                                         <a href="/admin/showAssignedLeadBySales" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>view assigned lead</p>
+                                            <p>View Assigned Lead & ReAssign</p>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
 
 
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-edit"></i>
+                                    <p>
+                                        Quotation Manager
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @*<li class="nav-item">
+                        <a href="/admin/add_quotation" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>add_quotation</p>
+                        </a>
+                    </li>*@
+                                    <li class="nav-item">
+                                        <a href="/admin/view_quotation" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>view_quotation</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
 
 
                         }
@@ -724,7 +759,13 @@
                                     <li class="nav-item">
                                         <a href="/admin/view_assignedlead" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>View Assigned Lead</p>
+                                            <p> Follow UP Lead</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/viewleadsheetlist" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>View Assigned Lead & Generate </p>
                                         </a>
                                     </li>
 

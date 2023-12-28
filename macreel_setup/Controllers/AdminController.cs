@@ -484,7 +484,7 @@ namespace macreel_setup.Controllers
 
 
 
-            string str = "select * from employee_management ";
+            string str = " select * from employee_management ";
             DataSet ds = SqlHelper.ExecuteDataset(CommandType.Text, str);
 
 
@@ -505,7 +505,7 @@ namespace macreel_setup.Controllers
 
             if (id != null && id.ToString() != "")
             {
-                string strr = "select * from LeadTable where id='" + id + "'";
+                string strr = "select * from LeadTable where LeadID = '" + id + "' ";
                 DataTable dt = SqlHelper.ExecuteDataset(CommandType.Text, strr).Tables[0];
                 if (dt.Rows.Count > 0)
                 {
@@ -539,6 +539,7 @@ namespace macreel_setup.Controllers
                     lead_mangement.LeadGenerationDate = dt.Rows[0]["LeadGenerationDate"].ToString();
                     lead_mangement.LeadAssignedTo = dt.Rows[0]["LeadAssignedTo"].ToString();
                     lead_mangement.LeadStatus = dt.Rows[0]["LeadStatus"].ToString();
+                    lead_mangement.assignStatus = dt.Rows[0]["assignStatus"].ToString();
 
                 }
             }
@@ -552,7 +553,7 @@ namespace macreel_setup.Controllers
         {
 
 
-            SqlParameter[] para = new SqlParameter[31];
+            SqlParameter[] para = new SqlParameter[32];
 
             para[0] = new SqlParameter("@LeadID", SqlDbType.NVarChar);
             para[0].Value = lead_mangement.LeadID;
@@ -641,18 +642,21 @@ namespace macreel_setup.Controllers
             para[28] = new SqlParameter("@LeadStatus", SqlDbType.NVarChar);
             para[28].Value = lead_mangement.LeadStatus;
 
-            para[29] = new SqlParameter("@id", SqlDbType.NVarChar);
-            para[29].Value = lead_mangement.id;
+            para[29] = new SqlParameter("@assignStatus", SqlDbType.NVarChar);
+            para[29].Value = lead_mangement.assignStatus;
+
+            para[30] = new SqlParameter("@id", SqlDbType.NVarChar);
+            para[30].Value = lead_mangement.id;
 
             if (lead_mangement.id != null && lead_mangement.id != "")
             {
-                para[30] = new SqlParameter("@action", SqlDbType.NVarChar);
-                para[30].Value = "UpdateLead";
+                para[31] = new SqlParameter("@action", SqlDbType.NVarChar);
+                para[31].Value = "UpdateLead";
             }
             else
             {
-                para[30] = new SqlParameter("@action", SqlDbType.NVarChar);
-                para[30].Value = "insertLead";
+                para[31] = new SqlParameter("@action", SqlDbType.NVarChar);
+                para[31].Value = "insertLead";
             }
 
 
@@ -669,7 +673,7 @@ namespace macreel_setup.Controllers
             //    TempData["Message"] = "Error, Call Your Administritive !";
             //}
 
-            return RedirectToAction("lead_management");
+            return RedirectToAction("viewleadsheetlist");
         }
 
         public ActionResult view_lead()
@@ -681,12 +685,12 @@ namespace macreel_setup.Controllers
             string sql = "";
             if (logintype == "admin")
             {
-                sql = "select * from LeadTable order by id ";
+                sql = "select * from LeadTable order by id desc";
 
             }
             else
             {
-                sql = "select * from LeadTable where LeadGeneratedBy=" + loginId;
+                sql = "select * from LeadTable where LeadGeneratedBy =" + loginId;
 
             }
 
@@ -737,9 +741,14 @@ namespace macreel_setup.Controllers
 
         public ActionResult delet_lead(string id)
         {
-            string str = "delete from LeadTable where id='" + id + "'";
+            string str = "delete from LeadTable where LeadId='" + id + "'";
 
             SqlHelper.ExecuteNonQuery(CommandType.Text, str);
+
+            string str2 = "update LeadSheet set generateStatus = '" + 0 + "' where id='" + id + "'";
+
+            SqlHelper.ExecuteNonQuery(CommandType.Text, str2);
+
 
             return RedirectToAction("view_lead");
         }
@@ -1553,6 +1562,30 @@ namespace macreel_setup.Controllers
                     }
                 }
 
+
+                manage_leadsheet leadStatus = new manage_leadsheet();
+
+
+
+                switch (leaduploadedbytype)
+                {
+                    case "admin":
+                        leadStatus.assignStatus = "1";
+                        break;
+                    case "sales":
+                        leadStatus.assignStatus = "2";
+                        break;
+                    case "agent":
+                        leadStatus.assignStatus = "3";
+                        break;
+                    default:
+                        return RedirectToAction("viewleadsheetlist");
+
+                }
+
+
+
+
                 con.Open();
                 foreach (var lead in leadsheet)
                 {
@@ -1568,6 +1601,7 @@ namespace macreel_setup.Controllers
                     cmd.Parameters.AddWithValue("@productname", lead.productname);
                     cmd.Parameters.AddWithValue("@uploadedby", leaduploadedby);
                     cmd.Parameters.AddWithValue("@uploadedbytype", leaduploadedbytype);
+                    cmd.Parameters.AddWithValue("@assignStatus", leadStatus.assignStatus);
                     cmd.Parameters.AddWithValue("@generateStatus", 0);
 
                     cmd.Parameters.AddWithValue("@Action", "insert_leadsheet");
@@ -1591,10 +1625,74 @@ namespace macreel_setup.Controllers
 
         public ActionResult viewleadsheetlist()
         {
-            //  var loginId= Session["employeeId"].ToString();
-            // var usertype = Session["usertype"].ToString();
+
+            var loginId = Session["employeeId"].ToString();
+
+
+            var logintype = Session["usertype"].ToString();
+
+            var repmanager = db.getreportedManager(Convert.ToInt32(loginId));
+
+
+
+            var rpmId = repmanager.report_manager_Id;
+
+
+
+            List<macreel_setup.Models.admin.employe_list> employe_list = new List<macreel_setup.Models.admin.employe_list>();
+
+            string str = "";
+            // string str = "select * from employee_management where employee_id NOT IN (" + loginId + ")";
+
+            str = "select * from employee_management where id = '" + rpmId + "'";
+
+            //if (logintype == "sales")
+            //{
+            //    str = "select * from employee_management where reporting_manager = '" + loginId + "'";
+            //}
+
+
+            DataSet ds = SqlHelper.ExecuteDataset(CommandType.Text, str);
+
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    employe_list.Add(new macreel_setup.Models.admin.employe_list()
+                    {
+                        name = dr["employee_first_name"].ToString() + dr["employee_last_name"].ToString(),
+                        employee_id = dr["employee_id"].ToString()
+                    });
+                }
+            }
+
+            ViewBag.ReAssigemploye_list = employe_list;
+
+
+
+            //--------------------------------------
+
+
+            //List<SelectListItem> agentlist = new List<SelectListItem>();
+            //agentlist = db.getAgentList(loginId);
+            //ViewBag.AgentList = agentlist;
+
+
+            //List<SelectListItem> saleslist = new List<SelectListItem>();
+            //saleslist = db.getSalesList();
+
+            //ViewBag.SalesList = saleslist;
+
+
+
+            var usertype = Session["usertype"].ToString();
             List<manage_leadsheet> leadsheetlist = new List<manage_leadsheet>();
-            leadsheetlist = db.getleadsheetlist();
+            leadsheetlist = db.getleadsheetlist(loginId, usertype);
+
+
+
+
             return View(leadsheetlist);
         }
         //add lead manualy
@@ -1618,20 +1716,66 @@ namespace macreel_setup.Controllers
 
         public ActionResult insertLeadManualyBySalesMan(macreel_setup.Models.admin.manage_leadsheet leadObj)
         {
-            leadObj.uploadedby = Session["employeeId"].ToString();
-            leadObj.uploadedbytype = Session["usertype"].ToString();
+
+            //leadObj.uploadedby = Session["employeeId"].ToString();
+            // leadObj.uploadedbytype = Session["usertype"].ToString();
+
+            var uploadedBy = Session["employeeId"].ToString();
+            var uploadedbytype = Session["usertype"].ToString();
+
+
+            switch (uploadedbytype)
+            {
+                case "admin":
+                    leadObj.assignStatus = "1";
+                    break;
+                case "sales":
+                    leadObj.assignStatus = "2";
+                    break;
+                case "agent":
+                    leadObj.assignStatus = "3";
+                    break;
+                default:
+                    return RedirectToAction("viewleadsheetlist");
+
+            }
+
+
+            //if(uploadedbytype == "admin")
+            //{
+            //    leadObj.assignStatus = "1";
+            //}
+
+            //if (uploadedbytype == "sales")
+            //{
+            //    leadObj.assignStatus = "2";
+            //}
+
+            //if (uploadedbytype == "agent")
+            //{
+            //    leadObj.assignStatus = "3";
+            //}
+
+
+
+
+            leadObj.uploadedby = uploadedBy;
+            leadObj.uploadedbytype = uploadedbytype;
+
 
             db.addmanualyleadBySalesman(leadObj);
             return RedirectToAction("viewleadsheetlist");
         }
 
-        [HttpPost]
+
         public ActionResult generateLeadBySalesman(string id)
         {
 
-
             var newlead = db.getleadsheetById(id).FirstOrDefault();
-
+            newlead.uploadedby = Session["employeeId"].ToString();
+            newlead.uploadedbytype = Session["usertype"].ToString();
+            // newlead.LeadGenerationDate= DateTime.Now.ToString("dd/MM/yyyy"));
+            //  Console.WriteLine(Date.ToString("dd/MM/yyyy"));
 
             db.generatenewLeadBySalesman(newlead);
             var leadId = db.getgeneratedleadById(id).FirstOrDefault();
@@ -1654,10 +1798,16 @@ namespace macreel_setup.Controllers
 
         public ActionResult AssignLead()
         {
+            var rpm = Session["employeeId"].ToString();
             List<SelectListItem> agentlist = new List<SelectListItem>();
-            agentlist = db.getAgentList();
-
+            agentlist = db.getAgentList(rpm);
             ViewBag.AgentList = agentlist;
+
+
+            List<SelectListItem> saleslist = new List<SelectListItem>();
+            saleslist = db.getSalesList();
+
+            ViewBag.SalesList = saleslist;
 
 
             return View();
@@ -1666,8 +1816,11 @@ namespace macreel_setup.Controllers
 
         public JsonResult AllLeadJson()
         {
+            var loginId = Session["employeeId"].ToString();
+            var loginType = Session["usertype"].ToString();
+
             List<manage_leadsheet> leadlist = new List<manage_leadsheet>();
-            leadlist = db.getallLeadForAssign();
+            leadlist = db.getallLeadForAssign(loginId, loginType);
             IDictionary<string, object> alldata = new Dictionary<string, object>();
             alldata.Add(new KeyValuePair<string, object>("leadlistData", leadlist));
             return Json(alldata, JsonRequestBehavior.AllowGet);
@@ -1682,14 +1835,28 @@ namespace macreel_setup.Controllers
         [HttpPost]
         public ActionResult AssignLeadTo(string agentId, string selectRows)
         {
-
-
-            // List<assignLead> assignLeadList = new List<assignLead>();
-
+            var uploadedbytype = Session["usertype"].ToString();
             var assignLead = new assignLead();
 
-            assignLead.agentId = agentId;
+            switch (uploadedbytype)
+            {
+                case "admin":
+                    assignLead.assignStatus = "2";
+                    break;
+                case "sales":
+                    assignLead.assignStatus = "3";
+                    break;
+                default:
+                    return RedirectToAction("AssignLead");
 
+            }
+
+
+
+
+
+            assignLead.agentId = agentId;
+            assignLead.assignBy_Id = Session["employeeId"].ToString();
             //     string s = "a,b, b, c";
 
             string[] values = selectRows.Split(',');
@@ -1717,7 +1884,7 @@ namespace macreel_setup.Controllers
             var loginId = Session["employeeId"].ToString();
 
             List<SelectListItem> agentlist = new List<SelectListItem>();
-            agentlist = db.getAgentList();
+            agentlist = db.getAgentList(loginId);
 
             ViewBag.AgentList = agentlist;
 
@@ -1745,7 +1912,8 @@ namespace macreel_setup.Controllers
         //view assign lead details
         public ActionResult viewAssignedLeadByLeadId(string leadId)
         {
-            var assignedLead = db.getassingedLeadByLeadId(leadId);
+            // var assignedLead = db.getassingedLeadByLeadId(leadId);
+            var assignedLead = db.getLeadDetailbyleadId(leadId);
             return Json(assignedLead, JsonRequestBehavior.AllowGet);
         }
 
@@ -1763,21 +1931,31 @@ namespace macreel_setup.Controllers
             return Json(deatils, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult viewLeadsheetstatusById(string leadId)
+        {
+
+            var leadsheetstatus = db.getleadsheetDetailsById(leadId);
+
+
+            return Json(leadsheetstatus, JsonRequestBehavior.AllowGet);
+
+        }
 
         public ActionResult view_assignedlead()
         {
             int loginId = Convert.ToInt32(Session["employeeId"]);
+            var logintype = Session["usertype"].ToString();
             //  Session["AgentId"] = id;
             //get reporting manager
             //getreportedManager
-            //  var repmanager = db.getreportedManager(id);
+            var repmanager = db.getreportedManager(loginId);
 
             //Session["managerId"] = repmanager.report_manager_Id;
             //Session["managername"] = repmanager.report_manager;
             //Session["empname"] = repmanager.employee_name;
             //Session["empId" ]= repmanager.employee_id;
 
-
+            var rpmId = repmanager.report_manager_Id;
 
             //List<SelectListItem> reAssignList = new List<SelectListItem>();
             //reAssignList = db.getAgentList();
@@ -1787,8 +1965,17 @@ namespace macreel_setup.Controllers
 
             List<macreel_setup.Models.admin.employe_list> employe_list = new List<macreel_setup.Models.admin.employe_list>();
 
+            string str = "";
+            // string str = "select * from employee_management where employee_id NOT IN (" + loginId + ")";
 
-            string str = "select * from employee_management where employee_id NOT IN (" + loginId + ")";
+            str = "select * from employee_management where id = '" + rpmId + "'";
+
+            if (logintype == "sales")
+            {
+                str = "select * from employee_management where reporting_manager = '" + loginId + "'";
+            }
+
+
             DataSet ds = SqlHelper.ExecuteDataset(CommandType.Text, str);
 
 
@@ -1831,6 +2018,7 @@ namespace macreel_setup.Controllers
             var leaddetails = db.getleadsheetById(leadId).FirstOrDefault();
             //var obj = db.getfollowUpLeadResponse(LeadId);
             ViewBag.clientName = leaddetails.client_name;
+            ViewBag.contactperson = leaddetails.contactperson;
             ViewBag.contact = leaddetails.contact_no;
             ViewBag.address = leaddetails.address;
             ViewBag.email = leaddetails.eMAIL_ID;
@@ -1892,11 +2080,33 @@ namespace macreel_setup.Controllers
             return Json(alldata, JsonRequestBehavior.AllowGet); ;
         }
 
-
+        //transfer generated lead 
         public ActionResult TransferAssignLead(string employee_id, string LeadId)
         {
 
             var assignLead = new assignLead();
+
+
+            var uploadedbytype = Session["usertype"].ToString();
+
+
+            switch (uploadedbytype)
+            {
+                case "admin":
+                    assignLead.assignStatus = "2";
+                    break;
+                case "sales":
+                    assignLead.assignStatus = "3";
+                    break;
+                case "agent":
+                    assignLead.assignStatus = "2";
+                    break;
+                default:
+                    return RedirectToAction("AssignLead");
+
+            }
+
+
 
             var loginId = Session["employeeId"].ToString();
             assignLead.assignBy_Id = loginId;
@@ -1904,7 +2114,7 @@ namespace macreel_setup.Controllers
             assignLead.reAssignTo = employee_id;
             assignLead.AssignLead_Id = LeadId;
 
-            db.transgerAssignLeadTo_rpm(assignLead);
+            db.transferAssignLeadTo_rpm(assignLead);
 
             return Json(assignLead, JsonRequestBehavior.AllowGet);
 
@@ -1918,6 +2128,7 @@ namespace macreel_setup.Controllers
         }
 
 
+
         public ActionResult viewresponsebyleadId(string LeadId)
         {
 
@@ -1927,6 +2138,7 @@ namespace macreel_setup.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
 
         }
+
 
         #endregion
 
@@ -1961,7 +2173,7 @@ namespace macreel_setup.Controllers
 
             List<SelectListItem> statelist = new List<SelectListItem>();
 
-            string str = "select * from tbl_state where country_id=" + countryId;
+            string str = "select * from tbl_state where country_id = " + countryId;
             DataSet ds = SqlHelper.ExecuteDataset(CommandType.Text, str);
 
 
@@ -1983,7 +2195,7 @@ namespace macreel_setup.Controllers
         {
             List<SelectListItem> citylist = new List<SelectListItem>();
 
-            string str = "select * from tbl_city where state_id=" + stateId;
+            string str = "select * from tbl_city where state_id = " + stateId;
             DataSet ds = SqlHelper.ExecuteDataset(CommandType.Text, str);
 
 
@@ -2000,7 +2212,50 @@ namespace macreel_setup.Controllers
             }
 
             return Json(citylist, JsonRequestBehavior.AllowGet);
+
         }
+
+        // transfer leadsheet lead before generated
+
+        public ActionResult transferLead(string agentId, string LeadId)
+        {
+
+
+            var assignLead = new assignLead();
+
+            var loginId = Session["employeeId"].ToString();
+
+            var uploadedbytype = Session["usertype"].ToString();
+
+
+            switch (uploadedbytype)
+            {
+                case "admin":
+                    assignLead.assignStatus = "2";
+                    break;
+                case "sales":
+                    assignLead.assignStatus = "1";
+                    break;
+                case "agent":
+                    assignLead.assignStatus = "2";
+                    break;
+                default:
+                    return RedirectToAction("viewleadsheetlist");
+
+            }
+
+
+
+            assignLead.assignBy_Id = loginId;
+            assignLead.agentId = agentId;
+            assignLead.AssignLead_Id = LeadId;
+
+            db.transferLead(assignLead);
+
+            return Json(assignLead, JsonRequestBehavior.AllowGet);
+        }
+
+
         #endregion
 
 

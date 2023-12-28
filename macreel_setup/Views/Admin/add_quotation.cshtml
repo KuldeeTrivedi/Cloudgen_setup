@@ -14,8 +14,8 @@
 
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <style>
-    .hidden{
-        display:block;
+    .hidden {
+        display: block;
     }
 </style>
 
@@ -59,7 +59,7 @@
                                         <!-- text input -->
                                         <div class="form-group">
                                             <label>Quotation_No</label>
-                                            <input type="text" class="form-control" id="Quotation_No" placeholder="Enter Quotation_No..." name="Quotation_No" value="@Model.Quotation_No"readonly>
+                                            <input type="text" class="form-control" id="Quotation_No" placeholder="Enter Quotation_No..." name="Quotation_No" value="@Model.Quotation_No" readonly>
                                         </div>
                                     </div>
 
@@ -311,23 +311,23 @@
     $(document).ready(function () {
         var branch = $('#loginbranch').text();
 
-       // console.log(branch);
-       // alert(branch);
+        // console.log(branch);
+        // alert(branch);
 
         var quotationvalue = $('#Quotation_No').val();
         var currentYear = new Date().getFullYear(); // Get the current year
         var randomNumber = Math.floor(Math.random() * 100); // Generate a random number (change as needed)
         var generatedNumber = branch.toString().replace(/\s/g, '') + currentYear.toString() + randomNumber.toString(); // Concatenate year and random number
-       // alert(generatedNumber);
+        // alert(generatedNumber);
         if (quotationvalue != undefined && quotationvalue != null && quotationvalue != '') {
 
         } else {
             $('#Quotation_No').val(generatedNumber);
 
         }
-         // Display generated Quotation_No
+        // Display generated Quotation_No
 
-        
+
         var currentdate = moment(new Date()).format("YYYY-MM-DD");
         $('#Generated_Date').val(currentdate);
         var LeadReference = $('#Lead_Reference').val();

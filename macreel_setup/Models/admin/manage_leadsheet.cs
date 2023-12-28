@@ -7,15 +7,18 @@ namespace macreel_setup.Models.admin
 {
     public class manage_leadsheet
     {
-        public string id { get; set; } 
+        public string id { get; set; }
         public string client_name { get; set; }
         public string contact_no { get; set; }
-        public string eMAIL_ID { get; set;}
+        public string eMAIL_ID { get; set; }
         public string address { get; set; }
         public string contactperson { get; set; }
         public string productname { get; set; }
         public string uploadedby { get; set; }
+        public string assignBy { get; set; }
+        public string assignTo { get; set; }
         public string uploadedbytype { get; set; }
+        //  public string LeadGenerationDate { get; set; }
         public string generateStatus { get; set; }
         public string assignStatus { get; set; }
         public HttpPostedFileBase fileupload1 { get; set; }
@@ -23,7 +26,7 @@ namespace macreel_setup.Models.admin
     public class agentlist
     {
         public string agentId { get; set; }
-        public string agentName { get; set;}
+        public string agentName { get; set; }
     }
 
     public class assignLead
@@ -33,7 +36,7 @@ namespace macreel_setup.Models.admin
         public string reAssignTo { get; set; }
         public string agentId { get; set; }
 
-        public string  AssignLead_Id { get; set; }
+        public string AssignLead_Id { get; set; }
         public int leadId { get; set; }
         public string assignStatus { get; set; }
         public string rpmId { get; set; }
