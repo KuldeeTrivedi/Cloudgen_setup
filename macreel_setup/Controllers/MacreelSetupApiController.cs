@@ -1958,7 +1958,7 @@ namespace macreel_setupwithapi.Controllers
         public IHttpActionResult Get_leadsheetlist(string usertype, string loginId)
         {
             List<manage_leadsheet> leadsheet = new List<manage_leadsheet>();
-            leadsheet = db.getleadsheetlist(usertype, loginId);
+            leadsheet = db.getleadsheetlist();
             return Ok(leadsheet);
         }
         [HttpGet]
