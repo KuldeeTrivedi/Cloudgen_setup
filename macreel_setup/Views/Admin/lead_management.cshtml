@@ -10,6 +10,9 @@
     }
 </style>
 
+@*<script>
+        $('.hidedive').hide();
+    </script>*@
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -46,12 +49,15 @@
 
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label for="">Lead Id:-</label>
-                                            <input type="text" class="form-control" id="LeadID" name="LeadID" placeholder="Enter LeadID" value="@Model.LeadID" required>
-                                        </div>
-                                    </div>
+                                    @*<div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="">Lead Id:-</label>
+                                            </div>
+                                        </div>*@
+
+                                    <input type="hidden" class="form-control" id="LeadID" name="LeadID" placeholder="Enter LeadID" value="@Model.LeadID" required readonly>
+
+
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label for="">Lead Segment:-</label>
@@ -67,18 +73,18 @@
                                 </div>
 
                                 <div class="row">
-                                    @*   <div class="col-sm-4">
-               <div class="form-group">
-                    <label for="">Client:-</label>
-                    <input type="text" class="form-control" id="Client" name="Client" placeholder="Enter Client" value="@Model.Client" required>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="">Client Mobile No.:-</label>
-                    <input type="text" class="form-control" id="Telephone" name="Telephone" placeholder="Enter Client Mobile No." value="@Model.Telephone" required>
-                </div>
-            </div>*@
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="">Client:-</label>
+                                            <input type="text" class="form-control" id="Client" name="Client" placeholder="Enter Client" value="@Model.Client" required readonly>
+                                        </div>
+                                    </div>
+                                    @*<div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="">Client Mobile No.:-</label>
+                                                <input type="text" class="form-control" id="Telephone" name="Telephone" placeholder="Enter Client Mobile No." value="@Model.Telephone" required>
+                                            </div>
+                                        </div>*@
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label for="">Client Segment:-</label>
@@ -91,7 +97,7 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label for="">Contact Person:-</label>
-                                            <input type="text" class="form-control" id="ContactPerson" name="ContactPerson" placeholder="Enter Contact Person" value="@Model.ContactPerson" required>
+                                            <input type="text" class="form-control" id="ContactPerson" name="ContactPerson" placeholder="Enter Contact Person" value="@Model.ContactPerson" required readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
@@ -103,53 +109,53 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label for="">Contact Mobile Number:-</label>
-                                            <input type="text" class="form-control" id="ContactMobileNumber" name="ContactMobileNumber" placeholder="Enter Contact Mobile Number" value="@Model.ContactMobileNumber" required>
+                                            <input type="text" class="form-control" id="ContactMobileNumber" name="ContactMobileNumber" placeholder="Enter Contact Mobile Number" value="@Model.ContactMobileNumber" required readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label for="">Contact Email:-</label>
-                                            <input type="text" class="form-control" id="ContactEmail" name="ContactEmail" placeholder="Enter Contact Email" value="@Model.ContactEmail" required>
+                                            <input type="text" class="form-control" id="ContactEmail" name="ContactEmail" placeholder="Enter Contact Email" value="@Model.ContactEmail" required readonly>
                                         </div>
                                     </div>
                                 </div>
 
                                 @*<div class="row">
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label for="">Country:-</label>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label for="">Country:-</label>
 
-                                            <select class="form-control" id="selectCountries" name="country" @(Model.Country != "" ? "data-select=" + Model.Country + "" : "") >
-                                                <option value="">--Select Country--</option>
+                                                <select class="form-control" id="selectCountries" name="country" @(Model.Country != "" ? "data-select=" + Model.Country + "" : "") >
+                                                    <option value="">--Select Country--</option>
 
-                                            </select>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label for="">State:-</label>
-                                            <select class="form-control" id="selectStates" name="state" @(Model.State != "" ? "data-select=" + Model.State + "" : "") >
-                                                <option value="">--Select State--</option>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label for="">State:-</label>
+                                                <select class="form-control" id="selectStates" name="state" @(Model.State != "" ? "data-select=" + Model.State + "" : "") >
+                                                    <option value="">--Select State--</option>
 
-                                            </select>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label for="">City:-</label>
-                                            <select class="form-control" id="selectcity" name="city" @(Model.City != "" ? "data-select=" + Model.City + "" : "") >
-                                                <option value="">--Select City--</option>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label for="">City:-</label>
+                                                <select class="form-control" id="selectcity" name="city" @(Model.City != "" ? "data-select=" + Model.City + "" : "") >
+                                                    <option value="">--Select City--</option>
 
-                                            </select>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label for="">Area PIN:-</label>
-                                            <input type="text" class="form-control" id="PIN" name="PIN" placeholder="" value="@Model.PIN" required>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label for="">Area PIN:-</label>
+                                                <input type="text" class="form-control" id="PIN" name="PIN" placeholder="" value="@Model.PIN" required>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>*@
+                                    </div>*@
 
 
                                 <div class="row">
@@ -157,18 +163,18 @@
                                         <div class="form-group">
                                             <label for="">Country:-</label>
                                             @*<select class="form-control" id="countrylist" name="countrylist" @(Model.Country != "" ? "data-select=" + Model.Country + "" : "") >
-        <option value="">--select country --</option>
-        </select>*@
+                                                <option value="">--select country --</option>
+                                                </select>*@
 
-                                        @*    @Html.DropDownList("Country", null, "--select country --", new { @class = "form-control" })*@
+                                            @*    @Html.DropDownList("Country", null, "--select country --", new { @class = "form-control" })*@
 
                                             @*<select class="form-control" id="selectCountries" name="country" @(Model.Country != "" ? "data-select=" + Model.Country + "" : "") required>
-        <option value="">--Select Country--</option>
+                                                <option value="">--Select Country--</option>
 
-           </select>*@
+                                                   </select>*@
 
                                             <select id="Country" class="form-control sn-required" name="Country">
-                                                <option>--Select Country--</option>
+                                                <option value="">--Select Country--</option>
                                                 @if (ViewBag.Country != null)
                                                 {
                                                     foreach (var item in ViewBag.Country as List<SelectListItem>)
@@ -218,7 +224,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label for="">Address:-</label>
-                                            <textarea class="form-control" id="Address" name="Address">@Model.Address</textarea>
+                                            <textarea class="form-control" id="Address" name="Address" readonly>@Model.Address</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -256,7 +262,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="">Product Required:-</label>
-                                            <input type="text" class="form-control" id="ProductRequired" name="ProductRequired" placeholder="Enter Product Required" value="@Model.ProductRequired" required>
+                                            <input type="text" class="form-control" id="ProductRequired" name="ProductRequired" placeholder="Enter Product Required" value="@Model.ProductRequired" required readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -302,12 +308,12 @@
                                             <input type="text" class="form-control" id="EstimatedLeadValue" name="EstimatedLeadValue" placeholder="Enter Estimated Lead Value" value="@Model.EstimatedLeadValue" required>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label for="">Lead Generated By:-</label>
-                                            @*    <input type="text" class="form-control" id="LeadGeneratedBy" name="LeadGeneratedBy"  value="@Model.LeadGeneratedBy" readonly>*@
+                                    <!--<div class="col-sm-4 hidedive">
+                                    <div class="form-group">
+                                        <label for="">Lead Generated By:-</label>-->
+                                    @*    <input type="text" class="form-control" id="LeadGeneratedBy" name="LeadGeneratedBy"  value="@Model.LeadGeneratedBy" readonly>*@
 
-                                            <select class="form-control" id="LeadGeneratedBy" name="LeadGeneratedBy" @(Model.LeadGeneratedBy != "" ? "data-select=" + Model.LeadGeneratedBy + "" : "") required>
+                                    <!--<select class="form-control" id="LeadGeneratedBy" name="LeadGeneratedBy" @(Model.LeadGeneratedBy != "" ? "data-select=" + Model.LeadGeneratedBy + "" : "") required readonly>
                                                 <option value="">--Select Reporting Manager--</option>
                                                 @if (Model.employe_list.Count > 0)
                                                 {
@@ -325,13 +331,22 @@
                                                 }
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label for="">Lead Generated By Type:-</label>
-                                            <input type="text" class="form-control" id="LeadGeneratedByType" name="LeadGeneratedByType" value="@Model.LeadGeneratedByType" readonly>
-                                        </div>
-                                    </div>
+                                    </div>-->
+                                    <input type="hidden" class="form-control" id="LeadGeneratedBy" name="LeadGeneratedBy" value="@Model.LeadGeneratedBy" readonly>
+                                    <input type="text" class="form-control" id="LeadGeneratedByType" name="LeadGeneratedByType" value="@Model.LeadGeneratedByType" readonly>
+                                    <input type="hidden" class="form-control" id="LeadAssignedTo" name="LeadAssignedTo" value="@Model.LeadAssignedTo">
+                                    <input type="hidden" class="form-control" id="assignStatus" name="assignStatus" value="@Model.assignStatus">
+
+
+                                    @*<div class="col-sm-4 hidedive">
+                                            <div class="form-group">
+                                                <label for="">Lead Generated By Type:-</label>
+                                                <input type="text" class="form-control" id="LeadGeneratedByType" name="LeadGeneratedByType" value="@Model.LeadGeneratedByType" readonly>
+                                                <input type="hidden" class="form-control" id="LeadAssignedTo" name="LeadAssignedTo" value="@Model.LeadAssignedTo">
+                                                <input type="hidden" class="form-control" id="assignStatus" name="assignStatus" value="@Model.assignStatus">
+                                            </div>
+                                        </div>*@
+
                                 </div>
 
                                 <div class="row">
@@ -342,33 +357,33 @@
                                         </div>
                                     </div>
                                     @*<div class="col-sm-4">
-                <div class="form-group">
-                    <label for="">Lead Assigned To:-</label>
-                    <select class="form-control" id="LeadAssignedTo" name="LeadAssignedTo" @(Model.LeadAssignedTo != "" ? "data-select=" + Model.LeadAssignedTo + "" : "") required>
-                        <option value="">--Select--</option>
-                        @if (Model.employe_list.Count > 0)
-                        {
-                            foreach (var item in Model.employe_list)
-                            {
-                                if (Model.LeadAssignedTo == item.employee_id.ToString())
-                                {
-                                    <option value="@item.employee_id" selected="selected">@item.name</option>
-                                }
-                                else
-                                {
-                                    <option value="@item.employee_id">@item.name</option>
-                                }
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="">Lead Status:-</label>
-                    <input type="text" class="form-control" id="LeadStatus" name="LeadStatus" placeholder="Enter Lead Status" value="@Model.LeadStatus" required>
-                </div>
-            </div>*@
+                                            <div class="form-group">
+                                                <label for="">Lead Assigned To:-</label>
+                                                <select class="form-control" id="LeadAssignedTo" name="LeadAssignedTo" @(Model.LeadAssignedTo != "" ? "data-select=" + Model.LeadAssignedTo + "" : "") required>
+                                                    <option value="">--Select--</option>
+                                                    @if (Model.employe_list.Count > 0)
+                                                    {
+                                                        foreach (var item in Model.employe_list)
+                                                        {
+                                                            if (Model.LeadAssignedTo == item.employee_id.ToString())
+                                                            {
+                                                                <option value="@item.employee_id" selected="selected">@item.name</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@item.employee_id">@item.name</option>
+                                                            }
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="">Lead Status:-</label>
+                                                <input type="text" class="form-control" id="LeadStatus" name="LeadStatus" placeholder="Enter Lead Status" value="@Model.LeadStatus" required>
+                                            </div>
+                                        </div>*@
                                 </div>
 
 
@@ -410,7 +425,7 @@
         $("[data-select]").each(function () {
             var obj = $(this);
             obj.val(obj.attr("data-select"))
-            
+
         });
 
 
@@ -420,9 +435,10 @@
 <script>
 
     function stateList(countryId = null, selected = null) {
-        
+
+
         $.ajax({
-            url: '/admin/statebind?countryId=' + countryId,
+            url: '/admin/statebind?countryId = ' + countryId,
             type: 'GET',
             data: { countryId: countryId },
             success: function (data) {
@@ -449,7 +465,7 @@
 
     function cityList(stateId = null, selected = null) {
         $.ajax({
-            url: '/admin/citybind?stateId=' + stateId,
+            url: '/admin/citybind?stateId = ' + stateId,
             type: 'GET',
             data: { stateId: stateId },
             success: function (data) {
@@ -473,14 +489,14 @@
         var countryId = $('#Country').val();
 
         var stateId = $('#selectStates').attr('data-sel');
-        if (countryId && countryId != 'undefined') {
+        if (countryId && countryId != 'undefined' && countryId != '') {
             if (stateId && stateId != 'undefined') {
                 stateList(countryId, stateId);
             } else {
                 stateList(countryId);
             }
         }
-        
+
 
 
         var cityId = $('#selectcity').attr('data-sel');
@@ -505,7 +521,7 @@
             var stateId = $(this).val();
             cityList(stateId);
 
-            
+
         });
     });
 </script>

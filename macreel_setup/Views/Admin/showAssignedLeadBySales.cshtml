@@ -72,7 +72,8 @@
                                         <th>Email</th>
                                         <th>Address</th>
                                         <th class="hiddenId"></th>
-                                        <th>Assign To</th>
+                                        <th>Assigned By</th>
+                                        <th>Assigned To</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -86,11 +87,12 @@
                                                 <td>@item.ContactEmail</td>
                                                 <td>@item.Address</td>
                                                 <td class="hiddenId">@item.LeadID</td>
+                                                <td>@item.AssignedBy</td>
                                                 <td>@item.employee_first_name</td>
                                                 <td>
                                                     <a href="/admin/viewAssignedLeadByLeadId?leadId=@(item.LeadID)" class="btn btn-sm showdetail"><i class="fas fa-eye"></i></a>
 
-                                                    <span class="re-assign"> <i class="fas fa-edit"></i></span> 
+                                                    <span class="re-assign"> <i class="fas fa-edit"></i></span>
                                                     @*  <span><a href="/admin/viewAssignedLeadByLeadId?leadId=@(item.LeadID)"><i class="fa fa-eye" aria-hidden="true"></i></a></span>*@
                                                 </td>
                                             </tr>
@@ -330,7 +332,7 @@
 
                     $.each(data, function (index, item) {
                         // alert(index);
-                        if (index != 'LeadID' && index != 'id' && index != 'employee_first_name' && index != 'countrylist' && index != 'employe_list' && index != 'LeadStatus' && index != 'Client' && index != 'LeadGeneratedBy' && index != 'LeadGeneratedByType' && index !='LeadGenerationDate') {
+                        if (index != 'LeadID' && index != 'id' && index != 'employee_first_name' && index != 'countrylist' && index != 'employe_list' && index != 'LeadStatus' && index != 'LeadGeneratedBy' && index != 'LeadGeneratedByType' && index != 'LeadGenerationDate' && index != 'assignStatus') {
                             tableHTML += '<tr>';
                             tableHTML += '<th>' + index.replace(/#|_/g, ' ') + ': </th>';
                             tableHTML += '<td>' + item + '</td>';

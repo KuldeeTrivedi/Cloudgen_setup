@@ -6,12 +6,13 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 
 namespace macreel_setup.Models.admin
 {
     public class DataServices
     {
-        public SqlConnection con=new SqlConnection(ConfigurationManager.ConnectionStrings["myconn"].ConnectionString);
+        public SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myconn"].ConnectionString);
 
 
 
@@ -1144,7 +1145,7 @@ namespace macreel_setup.Models.admin
             }
 
         }
-        
+
         public List<manage_quotation> getQuotationlistGeneratedBy(string loginId)
         {
             List<manage_quotation> quotlist = new List<manage_quotation>();
@@ -1196,7 +1197,7 @@ namespace macreel_setup.Models.admin
         }
 
 
-        public List<manage_quotation> getQuotationlistwithversion( string LeadId)
+        public List<manage_quotation> getQuotationlistwithversion(string LeadId)
         {
             List<manage_quotation> quotlist = new List<manage_quotation>();
             con.Open();
@@ -1312,25 +1313,60 @@ namespace macreel_setup.Models.admin
 
         #region manage leadsheet
 
-        public List<manage_leadsheet> getleadsheetlist(string usertype,string loginId)
+        public List<manage_leadsheet> getleadsheetlist(string loginId, string usertype)
         {
             List<manage_leadsheet> leadsheet = new List<manage_leadsheet>();
             con.Open();
             SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
             cmd.CommandType = CommandType.StoredProcedure;
+            //  cmd.Parameters.AddWithValue("@Action", "getallLeadsheet");
 
-            if (usertype == "admin")
+
+
+            switch (usertype)
             {
-                cmd.Parameters.AddWithValue("@Action", "getallLeadsheet");
+                case "admin":
+                    // cmd.Parameters.AddWithValue("@assignstatus", 1);
+                    cmd.Parameters.AddWithValue("@Action", "getallLeadsheet");
+                    break;
+                case "sales":
+                    //  cmd.Parameters.AddWithValue("@assignstatus", 2);
+                    cmd.Parameters.AddWithValue("@Action", "getleadsheetsales");
+                    break;
+                case "agent":
+                    // cmd.Parameters.AddWithValue("@assignstatus", 3);
+                    cmd.Parameters.AddWithValue("@Action", "getleadsheetAgent");
+                    break;
+                default:
+                    Console.WriteLine("oops! something occure");
+                    break;
 
             }
-            else
-            {
-                cmd.Parameters.AddWithValue("@uploadedby", loginId);
 
-                cmd.Parameters.AddWithValue("@Action", "getleadsheetuploadedby");
 
-            }
+            cmd.Parameters.AddWithValue("@assignTo", loginId);
+            cmd.Parameters.AddWithValue("@uploadedBy", loginId);
+            cmd.Parameters.AddWithValue("@assignBy", loginId);
+
+
+            //if (usertype == "admin")
+            //{
+            //    cmd.Parameters.AddWithValue("@Action", "getallLeadsheet");
+
+            //}
+            //else
+            //{
+            //    cmd.Parameters.AddWithValue("@assignTo", loginId);
+            //    cmd.Parameters.AddWithValue("@uploadedBy", loginId);
+            //    cmd.Parameters.AddWithValue("@assignBy", loginId);
+
+            //    cmd.Parameters.AddWithValue("@Action", "getleadsheetAssignedTo");
+
+            //}
+
+
+
+
             SqlDataReader sdr = cmd.ExecuteReader();
             manage_leadsheet lead = new manage_leadsheet();
             if (sdr.HasRows)
@@ -1348,6 +1384,9 @@ namespace macreel_setup.Models.admin
                     lead.uploadedby = sdr["uploadedby"].ToString();
                     lead.uploadedbytype = sdr["uploadedbytype"].ToString();
                     lead.generateStatus = sdr["generateStatus"].ToString();
+                    lead.assignBy = sdr["assignBy"].ToString();
+                    lead.assignTo = sdr["assignTo"].ToString();
+                    lead.assignStatus = sdr["assignStatus"].ToString();
                     leadsheet.Add(lead);
                 }
 
@@ -1362,13 +1401,55 @@ namespace macreel_setup.Models.admin
 
 
 
-        public List<manage_leadsheet> getallLeadForAssign()
+        public List<manage_leadsheet> getallLeadForAssign(string loginId, string loginType)
         {
             List<manage_leadsheet> leadsheet = new List<manage_leadsheet>();
             con.Open();
             SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@assignTo", loginId);
+
+            switch (loginType)
+            {
+                case "admin":
+                    cmd.Parameters.AddWithValue("@assignstatus", 1);
+                    break;
+                case "sales":
+                    cmd.Parameters.AddWithValue("@assignstatus", 2);
+                    break;
+                case "agent":
+                    cmd.Parameters.AddWithValue("@assignstatus", 3);
+                    break;
+                default:
+                    Console.WriteLine("oops! something occure");
+                    break;
+
+            }
+
+
+            //if (loginType == "admin")
+            //{
+
+            //  //  cmd.Parameters.AddWithValue("@Action", "getallLeadForAssign");
+            //    cmd.Parameters.AddWithValue("@assignstatus", 1);
+
+            //}
+            // else if (loginType == "sales")
+            //{
+            //    cmd.Parameters.AddWithValue("@assignstatus", 2);
+            // //   cmd.Parameters.AddWithValue("@Action", "getallAssignedLeadForSalesAgent");
+
+            //}
+            //else if (loginType == "agent")
+            //{
+            //    cmd.Parameters.AddWithValue("@assignstatus", 3);
+            ////    cmd.Parameters.AddWithValue("@Action", "getallAssignedLeadForSalesAgent");
+
+            //  }
+
+
             cmd.Parameters.AddWithValue("@Action", "getallLeadForAssign");
+
             SqlDataReader sdr = cmd.ExecuteReader();
             manage_leadsheet lead = new manage_leadsheet();
             if (sdr.HasRows)
@@ -1385,6 +1466,9 @@ namespace macreel_setup.Models.admin
                     lead.productname = sdr["productname"].ToString();
                     lead.uploadedby = sdr["uploadedby"].ToString();
                     lead.generateStatus = sdr["generateStatus"].ToString();
+                    lead.assignBy = sdr["assignedByName"].ToString();
+                    lead.assignTo = sdr["assignedToName"].ToString();
+                    lead.assignStatus = sdr["assignStatus"].ToString();
                     leadsheet.Add(lead);
                 }
 
@@ -1413,7 +1497,7 @@ namespace macreel_setup.Models.admin
                 while (sdr.Read())
                 {
                     lead = new manage_leadsheet();
-                    lead.id =sdr["id"].ToString();
+                    lead.id = sdr["id"].ToString();
                     lead.client_name = sdr["client_name"].ToString();
                     lead.contact_no = sdr["contact_no"].ToString();
                     lead.eMAIL_ID = sdr["eMAIL_ID"].ToString();
@@ -1421,6 +1505,9 @@ namespace macreel_setup.Models.admin
                     lead.contactperson = sdr["contactperson"].ToString();
                     lead.productname = sdr["productname"].ToString();
                     lead.uploadedby = sdr["uploadedby"].ToString();
+                    lead.assignBy = sdr["assignBy"].ToString();
+                    lead.assignTo = sdr["assignTo"].ToString();
+                    lead.assignStatus = sdr["assignStatus"].ToString();
                     leadsheet.Add(lead);
                 }
 
@@ -1429,18 +1516,59 @@ namespace macreel_setup.Models.admin
             return leadsheet;
         }
 
+
+        public manage_leadsheet getleadsheetDetailsById(string id)
+        {
+            manage_leadsheet lead = new manage_leadsheet();
+            con.Open();
+            SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Parameters.AddWithValue("@Action", "leadsheetstatus");
+            SqlDataReader sdr = cmd.ExecuteReader();
+
+            if (sdr.HasRows)
+            {
+                sdr.Read();
+                lead = new manage_leadsheet();
+                lead.id = sdr["id"].ToString();
+                lead.client_name = sdr["client_name"].ToString();
+                lead.contact_no = sdr["contact_no"].ToString();
+                lead.eMAIL_ID = sdr["eMAIL_ID"].ToString();
+                lead.address = sdr["address"].ToString();
+                lead.contactperson = sdr["contactperson"].ToString();
+                lead.productname = sdr["productname"].ToString();
+                lead.uploadedby = sdr["uploadedByName"].ToString();
+                lead.uploadedbytype = sdr["uploadedbytype"].ToString();
+                lead.assignBy = sdr["AssignedByName"].ToString();
+                lead.assignTo = sdr["AssignedToName"].ToString();
+
+
+
+            }
+            sdr.Close();
+            con.Close();
+            return lead;
+        }
+
         public bool generatenewLeadBySalesman(macreel_setup.Models.admin.manage_leadsheet lead)
         {
             SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@id", lead.id);
             cmd.Parameters.AddWithValue("@client_name", lead.client_name);
+            cmd.Parameters.AddWithValue("@contactPerson", lead.contactperson);
             cmd.Parameters.AddWithValue("@contact_no", lead.contact_no);
             cmd.Parameters.AddWithValue("@eMAIL_ID", lead.eMAIL_ID);
             cmd.Parameters.AddWithValue("@address", lead.address);
+            cmd.Parameters.AddWithValue("@productname", lead.productname);
             cmd.Parameters.AddWithValue("@LeadGeneratedBy", lead.uploadedby);
-            cmd.Parameters.AddWithValue("@LeadGeneratedByType", "Sales");
+            cmd.Parameters.AddWithValue("@TransferId", lead.assignBy);
+            cmd.Parameters.AddWithValue("@LeadAssignedTo", lead.assignTo);
+            cmd.Parameters.AddWithValue("@LeadGeneratedByType", lead.uploadedbytype);
+            cmd.Parameters.AddWithValue("@LeadGenerationDate", DateTime.Now.ToString("dd/MM/yyyy"));
             cmd.Parameters.AddWithValue("@generateStatus", 1);
+            cmd.Parameters.AddWithValue("@assignStatus", lead.assignStatus);
             cmd.Parameters.AddWithValue("@Action", "generatenewleadBySalesman");
 
             if (con.State == ConnectionState.Closed)
@@ -1460,28 +1588,29 @@ namespace macreel_setup.Models.admin
         //add manually lead 
         public bool addmanualyleadBySalesman(macreel_setup.Models.admin.manage_leadsheet lead)
         {
-            
+
 
             SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@id", lead.id);
-                cmd.Parameters.AddWithValue("@client_name", lead.client_name);
-                cmd.Parameters.AddWithValue("@contact_no", lead.contact_no);
-                cmd.Parameters.AddWithValue("@eMAIL_ID", lead.eMAIL_ID);
-                cmd.Parameters.AddWithValue("@address", lead.address);
-                cmd.Parameters.AddWithValue("@contactperson", lead.contactperson);
-                cmd.Parameters.AddWithValue("@productname", lead.productname);
-                cmd.Parameters.AddWithValue("@uploadedby", lead.uploadedby);
-                cmd.Parameters.AddWithValue("@uploadedbytype", lead.uploadedbytype);
-                cmd.Parameters.AddWithValue("@generateStatus", 0);
+            cmd.Parameters.AddWithValue("@id", lead.id);
+            cmd.Parameters.AddWithValue("@client_name", lead.client_name);
+            cmd.Parameters.AddWithValue("@contact_no", lead.contact_no);
+            cmd.Parameters.AddWithValue("@eMAIL_ID", lead.eMAIL_ID);
+            cmd.Parameters.AddWithValue("@address", lead.address);
+            cmd.Parameters.AddWithValue("@contactperson", lead.contactperson);
+            cmd.Parameters.AddWithValue("@productname", lead.productname);
+            cmd.Parameters.AddWithValue("@uploadedby", lead.uploadedby);
+            cmd.Parameters.AddWithValue("@uploadedbytype", lead.uploadedbytype);
+            cmd.Parameters.AddWithValue("@assignStatus", lead.assignStatus);
+            cmd.Parameters.AddWithValue("@generateStatus", 0);
             if (lead.id != null && lead.id != "")
             {
                 cmd.Parameters.AddWithValue("@Action", "updateLeadbyId");
             }
             else
             {
-                cmd.Parameters.AddWithValue("@Action", "insert_leadsheet");
+                cmd.Parameters.AddWithValue("@Action", "insert_leadmanualy");
 
             }
 
@@ -1517,7 +1646,7 @@ namespace macreel_setup.Models.admin
                 while (sdr.Read())
                 {
                     lead = new manage_leadsheet();
-                    lead.id = sdr["id"].ToString();
+                    lead.id = sdr["LeadId"].ToString();
                     leadsheet.Add(lead);
                 }
 
@@ -1529,7 +1658,7 @@ namespace macreel_setup.Models.admin
 
 
 
-        public bool delete_leadBySalesman (string id)
+        public bool delete_leadBySalesman(string id)
         {
             if (con.State == ConnectionState.Closed)
                 con.Open();
@@ -1550,7 +1679,7 @@ namespace macreel_setup.Models.admin
 
         //dropdown list for agentlist
 
-        public List<SelectListItem> getAgentList()
+        public List<SelectListItem> getAgentList(string rpm)
         {
 
 
@@ -1563,6 +1692,47 @@ namespace macreel_setup.Models.admin
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "getagentlist");
+                cmd.Parameters.AddWithValue("@rpmId", rpm);
+                con.Open();
+                SqlDataReader sdr = cmd.ExecuteReader();
+                if (sdr.HasRows)
+                {
+                    while (sdr.Read())
+                    {
+                        obj = new SelectListItem();
+                        obj.Value = Convert.ToInt32(sdr["id"]).ToString(); ;
+                        obj.Text = sdr["employee_first_name"].ToString();
+
+                        getlist.Add(obj);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                con.Close();
+                cmd.Dispose();
+            }
+            return getlist;
+
+
+        }
+        public List<SelectListItem> getSalesList()
+        {
+
+
+            List<SelectListItem> getlist = new List<SelectListItem>();
+            SelectListItem obj = new SelectListItem();
+
+            SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
+
+            try
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Action", "getSalesList");
                 con.Open();
                 SqlDataReader sdr = cmd.ExecuteReader();
                 if (sdr.HasRows)
@@ -1594,7 +1764,7 @@ namespace macreel_setup.Models.admin
 
         public bool assignLeadToAgent(assignLead assignObj)
         {
-           
+
 
             SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
 
@@ -1602,9 +1772,9 @@ namespace macreel_setup.Models.admin
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "assignLead");
-              //  cmd.Parameters.AddWithValue("@id", assignObj.id);
-                cmd.Parameters.AddWithValue("@agentId", assignObj.agentId);
-              //  cmd.Parameters.AddWithValue("@assignStatus", 1);
+                cmd.Parameters.AddWithValue("@assignBy", assignObj.assignBy_Id);
+                cmd.Parameters.AddWithValue("@assignTo", assignObj.agentId);
+                cmd.Parameters.AddWithValue("@assignStatus", assignObj.assignStatus);
                 cmd.Parameters.AddWithValue("@AssignLead_Id", assignObj.AssignLead_Id);
                 con.Open();
                 cmd.ExecuteNonQuery();
@@ -1622,6 +1792,38 @@ namespace macreel_setup.Models.admin
             return true;
         }
 
+        //transfer leadsheet lead before generated
+        public bool transferLead(assignLead assignObj)
+        {
+
+
+            SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
+
+            try
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Action", "transferLeadsheetLead");
+                cmd.Parameters.AddWithValue("@assignBy", assignObj.assignBy_Id);
+                cmd.Parameters.AddWithValue("@assignTo", assignObj.agentId);
+                cmd.Parameters.AddWithValue("@assignStatus", assignObj.assignStatus);
+                cmd.Parameters.AddWithValue("@AssignLead_Id", assignObj.AssignLead_Id);
+                con.Open();
+                cmd.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                con.Close();
+                cmd.Dispose();
+            }
+            return true;
+        }
+
+        //change 
 
         public List<lead_mangement> GetAllAssignedLeadList(string loginId)
         {
@@ -1632,7 +1834,8 @@ namespace macreel_setup.Models.admin
             SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Action", "getallAssignedLead");
-            cmd.Parameters.AddWithValue("@LeadGeneratedBy", loginId);
+            cmd.Parameters.AddWithValue("@LeadAssignedTo", loginId);
+            cmd.Parameters.AddWithValue("@TransferId", loginId);
             SqlDataReader sdr = cmd.ExecuteReader();
             lead_mangement obj = new lead_mangement();
 
@@ -1671,6 +1874,7 @@ namespace macreel_setup.Models.admin
                     obj.LeadGeneratedByType = sdr["LeadGeneratedByType"].ToString();
                     obj.LeadGenerationDate = sdr["LeadGenerationDate"].ToString();
                     obj.LeadAssignedTo = sdr["LeadAssignedTo"].ToString();
+                    obj.AssignedBy = sdr["TransferBy"].ToString();
                     obj.LeadStatus = sdr["LeadStatus"].ToString();
                     obj.employee_first_name = sdr["employee_first_name"].ToString();
                     assinLeadList.Add(obj);
@@ -1693,58 +1897,6 @@ namespace macreel_setup.Models.admin
             SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Action", "getassindeleadByLeadId");
-             cmd.Parameters.AddWithValue("@LeadId",id);
-            SqlDataReader sdr = cmd.ExecuteReader();
-
-            if (sdr.HasRows)
-            {
-                sdr.Read();
-                    obj = new lead_mangement();
-                    obj.id = sdr["id"].ToString();
-                    obj.LeadID = sdr["LeadID"].ToString();
-                    obj.LeadSegment = sdr["LeadSegment"].ToString();
-                    obj.Branch = sdr["Branch"].ToString();
-                    obj.Client = sdr["Client"].ToString();
-                    obj.ContactPerson = sdr["ContactPerson"].ToString();
-                    obj.ContactDesignation = sdr["ContactDesignation"].ToString();
-                    obj.ContactEmail = sdr["ContactEmail"].ToString();
-                    obj.ContactMobileNumber = sdr["ContactMobileNumber"].ToString();
-                    obj.Address = sdr["Address"].ToString();
-                    obj.Telephone = sdr["Telephone"].ToString();
-                    obj.City = sdr["City"].ToString();
-                    obj.PIN = sdr["PIN"].ToString();
-                    obj.State = sdr["State"].ToString();
-                    obj.Country = sdr["Country"].ToString();
-                    obj.ClientSegment = sdr["ClientSegment"].ToString();
-                    obj.ClientTurnover = sdr["ClientTurnover"].ToString();
-                    obj.ClientPCsOrNoOfEmployee = sdr["ClientPCsOrNoOfEmployee"].ToString();
-                    obj.ExpectedAnnualBusiness = sdr["ExpectedAnnualBusiness"].ToString();
-                    obj.ProductRequired = sdr["ProductRequired"].ToString();
-                    obj.ProductDescription = sdr["ProductDescription"].ToString();
-                    obj.ProductQuantity = sdr["ProductQuantity"].ToString();
-                    obj.ServiceRequired = sdr["ServiceRequired"].ToString();
-                    obj.ServicesDescription = sdr["ServicesDescription"].ToString();
-                    obj.EstimatedLeadValue = sdr["EstimatedLeadValue"].ToString();
-                    obj.LeadGeneratedBy = sdr["LeadGeneratedBy"].ToString();
-                    obj.LeadGeneratedByType = sdr["LeadGeneratedByType"].ToString();
-                    obj.LeadGenerationDate = sdr["LeadGenerationDate"].ToString();
-                  //  obj.LeadAssignedTo = sdr["LeadAssignedTo"].ToString();
-                    obj.LeadStatus = sdr["LeadStatus"].ToString();
-                    obj.LeadAssignedTo = sdr["assign_to_name"].ToString();
-            }
-            sdr.Close();
-            con.Close();
-            return obj;
-        }
-
-
-        public lead_mangement getLeadDetailbyleadId(string id)
-        {
-            lead_mangement obj = new lead_mangement();
-            con.Open();
-            SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Action", "getLeadDetailbyleadId");
             cmd.Parameters.AddWithValue("@LeadId", id);
             SqlDataReader sdr = cmd.ExecuteReader();
 
@@ -1777,16 +1929,107 @@ namespace macreel_setup.Models.admin
                 obj.ServiceRequired = sdr["ServiceRequired"].ToString();
                 obj.ServicesDescription = sdr["ServicesDescription"].ToString();
                 obj.EstimatedLeadValue = sdr["EstimatedLeadValue"].ToString();
-                obj.LeadGeneratedBy = sdr["LeadGeneratedByName"].ToString();
+                obj.LeadGeneratedBy = sdr["LeadGeneratedBy"].ToString();
                 obj.LeadGeneratedByType = sdr["LeadGeneratedByType"].ToString();
                 obj.LeadGenerationDate = sdr["LeadGenerationDate"].ToString();
-               // obj.LeadAssignedTo = sdr["LeadAssignedTo"].ToString();
+                //  obj.LeadAssignedTo = sdr["LeadAssignedTo"].ToString();
                 obj.LeadStatus = sdr["LeadStatus"].ToString();
-               // obj.employee_first_name = sdr["employee_first_name"].ToString();
+                obj.LeadAssignedTo = sdr["assign_to_name"].ToString();
+                obj.AssignedBy = sdr["AssignedBy"].ToString();
             }
             sdr.Close();
             con.Close();
             return obj;
+        }
+
+
+        public lead_mangement getLeadDetailbyleadId(string id)
+        {
+            lead_mangement obj = new lead_mangement();
+            con.Open();
+            SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Action", "getLeadDetailbyleadId");
+            cmd.Parameters.AddWithValue("@LeadId", id);
+            SqlDataReader sdr = cmd.ExecuteReader();
+
+            if (sdr.HasRows)
+            {
+                sdr.Read();
+                obj = new lead_mangement();
+                obj.id = sdr["id"].ToString();
+                obj.LeadID = sdr["LeadID"].ToString();
+                obj.LeadSegment = sdr["LeadSegment"].ToString();
+                obj.Branch = sdr["Branch"].ToString();
+                obj.Client = sdr["Client"].ToString();
+                obj.ContactPerson = sdr["ContactPerson"].ToString();
+                obj.ContactDesignation = sdr["ContactDesignation"].ToString();
+                obj.ContactEmail = sdr["ContactEmail"].ToString();
+                obj.ContactMobileNumber = sdr["ContactMobileNumber"].ToString();
+                obj.Address = sdr["Address"].ToString();
+                obj.Telephone = sdr["Telephone"].ToString();
+                obj.City = sdr["cityname"].ToString();
+                obj.PIN = sdr["PIN"].ToString();
+                obj.State = sdr["statename"].ToString();
+                obj.Country = sdr["countryname"].ToString();
+                obj.ClientSegment = sdr["ClientSegment"].ToString();
+                obj.ClientTurnover = sdr["ClientTurnover"].ToString();
+                obj.ClientPCsOrNoOfEmployee = sdr["ClientPCsOrNoOfEmployee"].ToString();
+                obj.ExpectedAnnualBusiness = sdr["ExpectedAnnualBusiness"].ToString();
+                obj.ProductRequired = sdr["ProductRequired"].ToString();
+                obj.ProductDescription = sdr["ProductDescription"].ToString();
+                obj.ProductQuantity = sdr["ProductQuantity"].ToString();
+                obj.ServiceRequired = sdr["ServiceRequired"].ToString();
+                obj.ServicesDescription = sdr["ServicesDescription"].ToString();
+                obj.EstimatedLeadValue = sdr["EstimatedLeadValue"].ToString();
+                obj.LeadGeneratedBy = sdr["LeadGeneratedByName"].ToString();
+                obj.LeadGeneratedByType = sdr["LeadGeneratedByType"].ToString();
+                obj.LeadGenerationDate = sdr["LeadGenerationDate"].ToString();
+                obj.AssignedBy = sdr["AssignedBy"].ToString();
+                obj.LeadAssignedTo = sdr["AssignedTo"].ToString();
+                obj.LeadStatus = sdr["LeadStatus"].ToString();
+                obj.assignStatus = sdr["assignStatus"].ToString();
+                // obj.employee_first_name = sdr["employee_first_name"].ToString();
+            }
+            sdr.Close();
+            con.Close();
+            return obj;
+        }
+
+
+
+        public List<leadstatusmodel> viewleadstatus()
+        {
+            List<leadstatusmodel> leadstatus = new List<leadstatusmodel>();
+
+            con.Open();
+            SqlCommand cmd = new SqlCommand("sp_leadresponse", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Action", "viewLeadstatus");
+            SqlDataReader sdr = cmd.ExecuteReader();
+            leadstatusmodel obj = new leadstatusmodel();
+            if (sdr.HasRows)
+            {
+                while (sdr.Read())
+                {
+                    obj = new leadstatusmodel();
+                    obj.leadId = sdr["LeadId"].ToString();
+                    obj.response = sdr["response"].ToString();
+                    obj.status = sdr["status"].ToString();
+                    obj.next_follow_up_date = sdr["next_follow_up_date"].ToString();
+                    obj.client = sdr["client"].ToString();
+                    obj.ContactPerson = sdr["ContactPerson"].ToString();
+                    obj.contac_no = sdr["ContactMobileNumber"].ToString();
+                    obj.contactemail = sdr["ContactEmail"].ToString();
+                    obj.product = sdr["ProductRequired"].ToString();
+                    obj.assignTo = sdr["assignTo"].ToString();
+                    obj.assignby = sdr["assignby"].ToString();
+                    obj.assignstatus = sdr["assignstatus"].ToString();
+                    leadstatus.Add(obj);
+                }
+            }
+            con.Close();
+            return leadstatus;
         }
 
 
@@ -1818,7 +2061,7 @@ namespace macreel_setup.Models.admin
                 repmanager.employee_name = sdr["employee_name"].ToString();
                 repmanager.report_manager = sdr["report_manager"].ToString();
                 repmanager.report_manager_Id = sdr["report_manager_Id"].ToString();
-              
+
 
             }
             sdr.Close();
@@ -1900,17 +2143,17 @@ namespace macreel_setup.Models.admin
             try
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-              
+
                 cmd.Parameters.AddWithValue("@id", respObj.id);
                 cmd.Parameters.AddWithValue("@AgentId", respObj.AgentId);
                 cmd.Parameters.AddWithValue("@LeadId", respObj.LeadId);
-                 cmd.Parameters.AddWithValue("@status",respObj.status );             
-                 cmd.Parameters.AddWithValue("@response",respObj.response );             
-                 cmd.Parameters.AddWithValue("@currentDate", respObj.current_date );             
-                 cmd.Parameters.AddWithValue("@next_follow_up_date", respObj.nextfollow_up_date);
-                
+                cmd.Parameters.AddWithValue("@status", respObj.status);
+                cmd.Parameters.AddWithValue("@response", respObj.response);
+                cmd.Parameters.AddWithValue("@currentDate", respObj.current_date);
+                cmd.Parameters.AddWithValue("@next_follow_up_date", respObj.nextfollow_up_date);
+
                 cmd.Parameters.AddWithValue("@Action", "add_response");
-                
+
 
 
                 con.Open();
@@ -1934,7 +2177,7 @@ namespace macreel_setup.Models.admin
 
         public List<manage_folloupLeadResponse> getfollowUpLeadResponse(string LeadId)
         {
-            List<manage_folloupLeadResponse>leadresponse  = new List<manage_folloupLeadResponse>();
+            List<manage_folloupLeadResponse> leadresponse = new List<manage_folloupLeadResponse>();
             con.Open();
             SqlCommand cmd = new SqlCommand("sp_leadresponse", con);
             cmd.CommandType = CommandType.StoredProcedure;
@@ -1995,9 +2238,9 @@ namespace macreel_setup.Models.admin
             return leadresponse;
         }
 
-        //transgerassing lead
+        //transferassing generated lead
 
-        public bool transgerAssignLeadTo_rpm(assignLead obj)
+        public bool transferAssignLeadTo_rpm(assignLead obj)
         {
 
             SqlCommand cmd = new SqlCommand("sp_LeadSheet", con);
@@ -2005,10 +2248,11 @@ namespace macreel_setup.Models.admin
             try
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Action", "transgerassignLead");
+                cmd.Parameters.AddWithValue("@Action", "transferGeneratedassignLead");
                 cmd.Parameters.AddWithValue("@rpmId", obj.reAssignTo);
                 cmd.Parameters.AddWithValue("@TransferId", obj.assignBy_Id);
                 cmd.Parameters.AddWithValue("@AssignLead_Id", obj.AssignLead_Id);
+                cmd.Parameters.AddWithValue("@assignStatus", obj.assignStatus);
                 con.Open();
                 cmd.ExecuteNonQuery();
 
@@ -2033,7 +2277,7 @@ namespace macreel_setup.Models.admin
 
         #region countrystatecitybind
 
-   
+
 
 
         public List<SelectListItem> countrybind()
@@ -2060,7 +2304,7 @@ namespace macreel_setup.Models.admin
                         obj.Text = sdr["country_name"].ToString();
 
                         countrylist.Add(obj);
-                       
+
                     }
                 }
             }

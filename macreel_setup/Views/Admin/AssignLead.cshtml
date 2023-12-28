@@ -17,10 +17,9 @@
 <style>
 
     .error {
-      color:red;
-      font-size :18px;
+        color: red;
+        font-size: 18px;
     }
-
 </style>
 
 <div class="content-wrapper">
@@ -46,7 +45,7 @@
         <div class="container-fluid">
 
             @*@using (Html.BeginForm("AssignLeadTo", "Admin", FormMethod.Post, new { id = "AssignForm" }))
-        {*@
+                {*@
 
             <form id="AssignForm" method="POST">
 
@@ -65,19 +64,38 @@
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <select class="form-control sn-required" name="agentId">
-                                                <option value="">--Select Agent--</option>
-                                                @if (ViewBag.AgentList != null)
+                                                @if (Session["usertype"].ToString() == "admin")
                                                 {
-                                                    foreach (var item in ViewBag.AgentList as List<SelectListItem>)
+                                                    <option value="">--Select sales--</option>
+                                                    if (ViewBag.SalesList != null)
                                                     {
-                                                        <option value="@item.Value">@item.Text</option>
+                                                        foreach (var item in ViewBag.SalesList as List<SelectListItem>)
+                                                        {
+                                                            <option value="@item.Value">@item.Text</option>
+                                                        }
                                                     }
+
                                                 }
+
+                                                else
+                                                {
+                                                    <option value="">--Select Agent--</option>
+                                                    if (ViewBag.AgentList != null)
+                                                    {
+                                                        foreach (var item in ViewBag.AgentList as List<SelectListItem>)
+                                                        {
+                                                            <option value="@item.Value">@item.Text</option>
+                                                        }
+                                                    }
+
+                                                }
+
+
                                             </select>
                                             <span class="agentError erorr" style="color:red"></span>
                                         </div>
                                     </div>
-                                  
+
                                 </div>
                             </div>
 
@@ -91,9 +109,13 @@
                                         <tr class="bg-info">
                                             <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
                                             <th>Client Name</th>
+                                            <th>Contact Person</th>
                                             <th>Contact No</th>
                                             <th>Email</th>
                                             <th>Address</th>
+                                            <th>Product Info</th>
+                                            <th>Assigned By</th>
+                                            <th>Assigned To</th>
                                         </tr>
                                     </thead>
 
@@ -157,9 +179,13 @@
             columns: [
                 { data: 'id' },
                 { data: 'client_name' },
+                { data: 'contactperson' },
                 { data: 'contact_no' },
                 { data: 'eMAIL_ID' },
                 { data: 'address' },
+                { data: 'productname' },
+                { data: 'assignBy' },
+                { data: 'assignTo' },
 
             ],
             columnDefs: [
@@ -181,8 +207,7 @@
 
 
         $('#example-select-all').on('click', function () {
-            if (this.checked)
-            {
+            if (this.checked) {
                 $('input[type="checkbox"]').each(function () {
                     this.checked = true;
                 });
@@ -214,61 +239,61 @@
             ev.preventDefault();
             // $("#userloginform").validate();
 
-                var agentId = $('select[name="agentId"]').val();
-                if (agentId == '' || agentId == undefined) {
-                    $('.agentError').html('Please select agent');
-                    return false;
-                } else {
-                    $('.agentError').html('');
-                }
-                
-                var selectRows = [];
-                $('#leadlisttable tbody input[type="checkbox"]:checked').each(function () {
-                    if ($(this).is(':checked')) {
-                        selectRows.push($(this).val());
-                    }
-                });
+            var agentId = $('select[name="agentId"]').val();
+            if (agentId == '' || agentId == undefined) {
+                $('.agentError').html('Please select agent');
+                return false;
+            } else {
+                $('.agentError').html('');
+            }
 
-                if (selectRows.length < 1) {
-                    $('.leadError').html('Please select atleast one row');
-                    return false;
-                } else {
-                    $('.leadError').html('');
+            var selectRows = [];
+            $('#leadlisttable tbody input[type="checkbox"]:checked').each(function () {
+                if ($(this).is(':checked')) {
+                    selectRows.push($(this).val());
+                }
+            });
+
+            if (selectRows.length < 1) {
+                $('.leadError').html('Please select atleast one row');
+                return false;
+            } else {
+                $('.leadError').html('');
             }
 
 
 
             var postData = new Array();
-             postData['agentId'] = agentId;
+            postData['agentId'] = agentId;
             postData['AssignLead_Id'] = selectRows;
-                
+
             console.log(postData);
 
 
 
-           // var assigObj = 'aaa';
+            // var assigObj = 'aaa';
             var agentId = agentId;
-           // var leadIdvalue = selectRows;
-        
+            // var leadIdvalue = selectRows;
+
             $.ajax({
                 url: '/admin/AssignLeadTo/',
-               // data: { 'assigObj': postData },
-                data: JSON.stringify({ agentId: '' + agentId + '', selectRows: '' + selectRows +'' }),
+                // data: { 'assigObj': postData },
+                data: JSON.stringify({ agentId: '' + agentId + '', selectRows: '' + selectRows + '' }),
 
-                    type: 'POST',
-                    contentType: "application/json; charset=utf-8",  
-                    success: function (data) {
-                       // console.log(data);
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    // console.log(data);
+                    location.reload(true);
+                },
+                error: function (request, error) {
+                    alert("something error occure");
 
-                    },
-                    error: function (request, error) {
-                        alert("something error occure");
 
 
+                }
+            });
 
-                    }
-                }); 
-            
         });
 
 

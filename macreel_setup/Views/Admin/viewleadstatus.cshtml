@@ -1,0 +1,363 @@
+﻿@model List<macreel_setup.Models.admin.leadstatusmodel>
+
+@{
+    ViewBag.Title = "viewleadstatus";
+    Layout = "~/Views/Shared/admin_mst.cshtml";
+}
+
+<style>
+    .hiddenId {
+        display: none;
+    }
+</style>
+
+<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>View Lead Status</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Lead List</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+
+                            <h3 class="card-title float-right">Lead List</h3>
+                        </div>
+                        <div class="card-body">
+                            <table>
+
+                                <tr>
+                                    <td style="background-color: #E3e2ab; width: 10px; height: 10px; border: 1px solid black;"></td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td>Agent</td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td style="background-color: #Abe3c8; width: 10px; height: 10px; border: 1px solid black; "></td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td>Sales</td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td style="background-color: aliceblue; width: 10px; height: 10px; border: 1px solid black; "></td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td>Admin</td>
+                                    <td></td>
+                                </tr>
+
+                            </table>
+                            <br /><br />
+
+                            <table id="leadstatustable" class="table table-bordered table-hover justify-content-center text-center">
+                                <thead>
+                                    <tr class="bg-primary">
+                                        <th>Sr.No</th>
+                                        <th>Client Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Contact No</th>
+                                        <th>Email</th>
+                                        <th>Product Info</th>
+                                        <th>Cureent Response</th>
+                                        <th>Assigned By</th>
+                                        <th>Assigned To</th>
+                                        <th>Next follow UP Date</th>
+                                        <th>Status</th>
+                                        <th class="hiddenId"></th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int i = 1;
+
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@item.client</td>
+                                                <td>@item.ContactPerson</td>
+                                                <td>@item.contac_no</td>
+                                                <td>@item.contactemail</td>
+                                                <td>@item.product</td>
+                                                <td>@item.response</td>
+                                                <td>@item.assignby</td>
+                                                <td>@item.assignTo</td>
+                                                <td>@item.next_follow_up_date</td>
+                                                @if (@item.status != "1")
+                                                {
+
+                                                    // leadstatus complete or inProgress
+                                                    <td>Inprogress</td>
+
+                                                }
+                                                else
+                                                {
+                                                    <td>Completed</td>
+
+                                                }
+
+
+                                                <td class="hiddenId">@item.assignstatus</td>
+
+                                                <td>
+                                                    <a href="/admin/viewresponsebyleadId?leadId=@(item.leadId)" class="btn btn-sm showLeadFollowUpdetail"><i class="fas fa-eye"></i></a> ||   <a href="/admin/viewleaddeatailById?leadId=@(item.leadId)" class="btn btn-sm showLeaddetail"><i class="fas fa-eye"></i></a>
+                                                </td>
+
+                                                @*@if (@item.generateStatus == "0")
+                                                    {
+                                                        <td> <a href="/admin/generateLeadBySalesman?id=@(item.id)"> <i class="fa fa-rocket" aria-hidden="true"></i></a> || <a href="/admin/addLeadManualyBySalesMan?id=@(item.id)"><i class="fas fa-edit"></i></a> || <a href="/admin/delet_leadBySalesman?id=@(item.id)"><i class="fas fa-regular fa-trash"></i></a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><span style="color:black" class="disabled">Generated </span> </td>
+
+                                                    }*@
+                                            </tr>
+                                            i++;
+                                        }
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- /.container-fluid -->
+    </section>
+
+    <section class="content" id="viewresponsesection" style="display:none">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+
+
+
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <span style="color:black">Client :</span>  <span style="color:azure" id="clientName"></span>
+                            <span style="color:black">Contact-No :</span><span style="color:azure" id="contactno"></span>
+                            <span style="color:black">Emai :</span><span style="color:azure" id="email">   </span>
+                            <span style="color:black">Contact Person :</span><span style="color:azure" id="contactperson"></span>
+                            <span style="color:black"> Product :</span><span style="color:azure" id="product"> </span>
+                        </div>
+
+                        <!-- /.card-header -->
+                        <div class="card-body" id="tableContainer">
+
+                            <table id="responsetable1" class="table table-bordered table-hover" style="width:100%">
+                                <thead>
+                                    <tr class="bg-info">
+                                        <th>Response</th>
+                                        <th>Current Date</th>
+                                        <th>Next Follow UP Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="showleaddetailsModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">lead Details</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <table id="detailstable" class="table">
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+    $('#leadstatustable').DataTable({
+        "fnRowCallback": function (nRow, aData) {
+            if (aData[11] == "1") {
+                $('td', nRow).css('background-color', 'aliceblue');
+            } else if (aData[11] == "2") {
+                $('td', nRow).css('background-color', '#Abe3c8');
+            }
+            else if (aData[11] == "3") {
+                $('td', nRow).css('background-color', '#E3e2ab');
+            }
+        }
+        });
+
+    //$('#viewresponsesection').hide();
+
+    $(document).ready(function () {
+
+        $('#leadstatustable ').on('click','.showLeadFollowUpdetail', function (ev) {
+            ev.preventDefault();
+
+            var currentRow = $(this).closest("tr");
+
+            var clientName = currentRow.find("td:eq(1)").html();
+            var contactno = currentRow.find("td:eq(2)").html();
+            var email = currentRow.find("td:eq(3)").html();
+            var contactperson = currentRow.find("td:eq(4)").html();
+            var product = currentRow.find("td:eq(5)").html();
+            $('#clientName').text(clientName);
+            $('#contactno').text(contactno);
+            $('#email').text(email);
+            $('#product').text(product);
+            $('#contactperson').text(contactperson);
+
+            //var clientName = currentRow.find("td:eq(5)").html();
+           // console.log(c)
+          //  alert(clientName);
+
+            var url = $(this).attr("href");
+
+            $.ajax({
+                type: 'Get',
+                url: url,
+                success: function (data) {
+
+                    $("#viewresponsesection").css("display", "block");
+
+                    $('#responsetable1 tbody').html("");
+
+                    $('#responsetable1').DataTable().destroy();
+
+                    var tableHTML = '';
+                  //  alert(JSON.stringify(data));
+
+                    $.each(data, function (index, item) {
+                        tableHTML += '<tr>';
+                        tableHTML += '<td>' + item.response + '</td>';
+                        tableHTML += '<td>' + item.current_date + '</td>';
+                        tableHTML += '<td>' + item.nextfollow_up_date + '</td>';
+                        if (item.status == '0') {
+                            tableHTML += '<td>' + 'InProgress' + '</td>';
+                        } else {
+
+                            tableHTML += '<td>' + 'Complete' + '</td>';
+
+                        }
+                        tableHTML += '</tr>';
+                    });
+
+
+                    $('#responsetable1 tbody').html(tableHTML);
+
+
+                    // Initialize DataTable after rendering the table
+                    $('#responsetable1').DataTable();
+
+                   // console.log('Data sent successfully');
+                },
+                error: function (error) {
+                    // Code to handle the error
+                    console.error('Error occurred', error);
+                }
+            });
+
+        });
+
+
+        $('#leadstatustable').on('click', '.showLeaddetail', function (ev) {
+            ev.preventDefault();
+            var url = $(this).attr("href");
+            $.ajax({
+                type: 'Get',
+                url: url,
+                success: function (data) {
+                    //alert(JSON.stringify(data));
+                    //  console.log(data);
+
+                    var tableHTML = '';
+
+                    $.each(data, function (index, item) {
+                        // alert(index);
+                        if (index != 'id' && index != 'employee_first_name' && index != 'LeadID' && index != 'countrylist' && index != 'employe_list' && index != 'LeadStatus' && index != 'assignStatus') {
+                            tableHTML += '<tr>';
+                            tableHTML += '<th>' + index.replace(/#|_/g, ' ') + ': </th>';
+                            tableHTML += '<td>' + item + '</td>';
+                            tableHTML += '</tr>';
+                        }
+                    });
+
+                    $('#detailstable').html(tableHTML);
+
+                    $('#showleaddetailsModal').modal('show');
+
+                },
+                error: function (error) {
+                    // Code to handle the error
+                    console.error('Error occurred', error);
+                }
+            });
+
+            // alert(action);
+        });
+
+        $(".showLeaddetail").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Show Details ');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
+        $(".showLeadFollowUpdetail").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Show Lead Follow UP Status ');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
+
+    });
+</script>
+

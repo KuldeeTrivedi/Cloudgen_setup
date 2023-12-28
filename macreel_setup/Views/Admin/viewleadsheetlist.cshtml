@@ -4,7 +4,11 @@
     ViewBag.Title = "viewleadsheetlist";
     Layout = "~/Views/Shared/admin_mst.cshtml";
 }
-
+<style>
+    .hiddenId {
+        display: none;
+    }
+</style>
 
 
 <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
@@ -36,6 +40,7 @@
     </section>
 
 
+
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -46,16 +51,39 @@
                             <h3 class="card-title float-right">LeadSheet List</h3>
                         </div>
                         <div class="card-body">
+                            <table>
+
+                                <tr>
+                                    <td style="background-color: #E3e2ab; width: 10px; height: 10px; border: 1px solid black;"></td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td>Agent</td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td style="background-color: #Abe3c8; width: 10px; height: 10px; border: 1px solid black; "></td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td>Sales</td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td style="background-color: aliceblue; width: 10px; height: 10px; border: 1px solid black; "></td>
+                                    <td style=" width: 10px; height: 10px;"></td>
+                                    <td>Admin</td>
+                                    <td></td>
+                                </tr>
+
+                            </table>
+                            <br /><br />
+
                             <table id="leadsheettable" class="table table-bordered table-hover justify-content-center text-center">
                                 <thead>
                                     <tr class="bg-primary">
                                         <th>Sr.No</th>
                                         <th>Client Name</th>
+                                        <th>Contact Person</th>
                                         <th>Contact No</th>
                                         <th>Email</th>
                                         <th>Address</th>
-                                        <th>Product</th>
-                                        <th>contact person</th>
+                                        <th>Product Info</th>
+                                        <th class="hiddenId"></th>
+                                        <th class="hiddenId"></th>
+
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -68,24 +96,72 @@
                                             <tr>
                                                 <td>@i</td>
                                                 <td>@item.client_name</td>
+                                                <td>@item.contactperson</td>
                                                 <td>@item.contact_no</td>
                                                 <td>@item.eMAIL_ID</td>
                                                 <td>@item.address</td>
                                                 <td>@item.productname</td>
-                                                <td>@item.contactperson</td>
+                                                <td class="hiddenId">@item.id</td>
+                                                <td class="hiddenId">@item.assignStatus</td>
+
                                                 @if (@item.generateStatus == "0")
                                                 {
-                                                    <td> <a href="/admin/generateLeadBySalesman?id=@(item.id)"> <i class="fa fa-rocket" aria-hidden="true"></i></a> || <a href="/admin/addLeadManualyBySalesMan?id=@(item.id)"><i class="fas fa-edit"></i></a> || <a href="/admin/delet_leadBySalesman?id=@(item.id)"><i class="fas fa-regular fa-trash"></i></a></td>
+                                                    if (Session["usertype"].ToString() == "admin")
+                                                    {
+                                                        <td>   <a href="/admin/addLeadManualyBySalesMan?id=@(item.id)"><i class="fas fa-edit"></i></a> || <a href="/admin/delet_leadBySalesman?id=@(item.id)"><i class="fas fa-regular fa-trash"></i></a> || <a href="/admin/viewLeadsheetstatusById?leadId=@(item.id)" class="btn btn-sm showleadsheetstaus"><i class="fas fa-eye"></i></a> </td>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        if (Session["usertype"].ToString() == "agent")
+                                                        {
+                                                            <td> <a href="/admin/generateLeadBySalesman?id=@(item.id)"> <i class="fa fa-rocket leadGenerate" aria-hidden="true"></i></a> || <a href="/admin/viewLeadsheetstatusById?leadId=@(item.id)" class="btn btn-sm showleadsheetstaus"><i class="fas fa-eye"></i></a> ||   <span class="re-assign"> <i class="fas fa-share leadBacktransfer"></i></span> </td>
+
+                                                        }
+                                                        else if (Session["usertype"].ToString() == "sales")
+                                                        {
+                                                            if (@item.assignTo == Session["employeeId"].ToString() || @item.assignTo == "")
+                                                            {
+                                                                <td> <a href="/admin/generateLeadBySalesman?id=@(item.id)"> <i class="fa fa-rocket leadGenerate" aria-hidden="true"></i></a> || <a href="/admin/viewLeadsheetstatusById?leadId=@(item.id)" class="btn btn-sm showleadsheetstaus"><i class="fas fa-eye"></i></a> ||   <span class="re-assign"> <i class="fas fa-share leadBacktransfer"></i></span> </td>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td> <a href="/admin/viewLeadsheetstatusById?leadId=@(item.id)" class="btn btn-sm showleadsheetstaus"><i class="fas fa-eye"></i></a> </td>
+
+                                                            }
+                                                        }
+
+
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    <td><span style="color:black" class="disabled">Generated </span> </td>
-
+                                                    if (Session["usertype"].ToString() == "admin")
+                                                    {
+                                                        <td>
+                                                            <span style="color:black" class="disabled">Generated </span> ||  <a href="/admin/lead_management?id=@(item.id)"><i class="fas fa-edit"></i></a> || <a href="/admin/delet_lead?id=@(item.id)"><i class="fas fa-regular fa-trash"></i></a> ||   <a href="/admin/viewleaddeatailById?leadId=@(item.id)" class="btn btn-sm showdetail"><i class="fas fa-eye"></i></a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (@item.assignTo != Session["employeeId"].ToString())
+                                                        {
+                                                            <td>
+                                                                <span style="color:black" class="disabled">Generated </span> || <a href="/admin/viewleaddeatailById?leadId=@(item.id)" class="btn btn-sm showdetail"><i class="fas fa-eye"></i></a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <span style="color:black" class="disabled">Generated </span> ||  <a href="/admin/lead_management?id=@(item.id)"><i class="fas fa-edit"></i></a> || <a href="/admin/viewleaddeatailById?leadId=@(item.id)" class="btn btn-sm showdetail"><i class="fas fa-eye"></i></a>
+                                                            </td>
+                                                        }
+                                                    }
                                                 }
                                             </tr>
                                             i++;
                                         }
-
                                     }
                                 </tbody>
                             </table>
@@ -105,8 +181,348 @@
 
 
 
+
+    <div class="modal" id="showleaddetailsModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">lead Details</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <table id="detailstable" class="table">
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal" id="showleadsheetstatus">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">lead Details</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <table id="leadsheetdeatails" class="table">
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal" id="reassignLeadModal2">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title"> Lead Transfer </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <span>Client : </span> <span style="color:rebeccapurple" id="clientname"></span>
+                            <span>Contact Person : </span> <span style="color:rebeccapurple" id="contactPerson"></span>
+                            <span>Contact No: </span>   <span style="color: rebeccapurple" id="contactno"></span>
+                            <span>Email : </span>   <span style="color: rebeccapurple" id="email"></span>
+                            <span>Product Info : </span>   <span style="color: rebeccapurple" id="productInfo"></span>
+
+                        </div>
+                    </div>
+                    <form id="reassignForm">
+
+                        <div class="row">
+                            <label class="col-sm-4 col-form-label">Employee Name</label>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <select class="form-control sn-required" name="agentId">
+                                        <option value="">-- Please Select --</option>
+                                        @if (ViewBag.ReAssigemploye_list != null)
+                                        {
+                                            foreach (var item in ViewBag.ReAssigemploye_list as List<macreel_setup.Models.admin.employe_list>)
+                                            {
+                                                <option value="@item.employee_id">@item.name</option>
+                                            }
+                                        }
+                                    </select>
+                                    <span class="agentError erorr" style="color:red"></span>
+                                </div>
+
+                                <input type="hidden" id="LeadId" name="LeadId" />
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+
+                                    <button type="submit" class="btn btn-sm btn-primary" id="btnReassign">Submit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 
 <script>
-    $('#leadsheettable').DataTable();
+    $('#leadsheettable').DataTable({
+
+
+        "fnRowCallback": function (nRow, aData) {
+            if (aData[8] == "1") {
+                $('td', nRow).css('background-color', 'aliceblue');
+            } else if (aData[8] == "2") {
+                $('td', nRow).css('background-color', '#Abe3c8');
+            }
+            else if (aData[8] == "3") {
+                $('td', nRow).css('background-color', '#E3e2ab');
+            }
+        }
+    });
+
+    $(document).ready(function () {
+
+
+        $('#leadsheettable').on('click', '.showdetail', function (ev) {
+            ev.preventDefault();
+            var url = $(this).attr("href");
+            $.ajax({
+                type: 'Get',
+                url: url,
+                success: function (data) {
+                    //alert(JSON.stringify(data));
+                    //  console.log(data);
+
+                    var tableHTML = '';
+
+                    $.each(data, function (index, item) {
+                        // alert(index);
+                        // LeadStatus
+                        if (index != 'id' && index != 'employee_first_name' && index != 'LeadID' && index != 'countrylist' && index != 'employe_list' && index != 'assignStatus') {
+
+                            tableHTML += '<tr>';
+                            if (index == 'LeadStatus') {
+                                if (item == undefined || item == 0) {
+                                    item == 'InProgress'
+                                } else {
+                                    item == 'InProgress'
+                                }
+
+                            }
+                            tableHTML += '<th>' + index.replace(/#|_/g, ' ') + ': </th>';
+                            tableHTML += '<td>' + item + '</td>';
+                            tableHTML += '</tr>';
+                        }
+                    });
+
+                    $('#detailstable').html(tableHTML);
+
+                    $('#showleaddetailsModal').modal('show');
+
+                },
+                error: function (error) {
+                    // Code to handle the error
+                    console.error('Error occurred', error);
+                }
+            });
+
+            // alert(action);
+        });
+
+
+
+
+
+
+        $(' #leadsheettable ').on('click', '.showleadsheetstaus', function (ev) {
+            ev.preventDefault();
+            var url = $(this).attr("href");
+            $.ajax({
+                type: 'Get',
+                url: url,
+                success: function (data) {
+                    //alert(JSON.stringify(data));
+                    //  console.log(data);
+
+                    var tableHTML = '';
+
+                    $.each(data, function (index, item) {
+                        // alert(index);
+                        if (index != 'id' && index != 'generateStatus' && index != 'assignStatus' && index != 'fileupload1') {
+                            tableHTML += '<tr>';
+                            tableHTML += '<th>' + index.replace(/#|_/g, ' ') + ': </th>';
+                            tableHTML += '<td>' + item + '</td>';
+                            tableHTML += '</tr>';
+                        }
+                    });
+
+                    $('#leadsheetdeatails').html(tableHTML);
+
+                    $('#showleadsheetstatus').modal('show');
+
+                },
+                error: function (error) {
+                    // Code to handle the error
+                    console.error('Error occurred', error);
+                }
+            });
+
+            // alert(action);
+        });
+
+
+        // re assign lead
+
+
+
+        $(document).on('click', 'table#leadsheettable tbody tr td .re-assign', function () {
+
+            // $('#myModal').modal({ show: true });
+            //console.log('shdkfh');
+
+            var currentRow = $(this).closest("tr");
+
+            var clientName = currentRow.find("td:eq(1)").html();
+            var contactPerson = currentRow.find("td:eq(2)").html();
+            var contactno = currentRow.find("td:eq(3)").html();
+            var email = currentRow.find("td:eq(4)").html();
+            var product = currentRow.find("td:eq(6)").html();
+            var LeadId = currentRow.find("td:eq(7)").html();
+            // alert(LeadId);
+
+            $('#clientname').html(clientName);
+            $('#contactPerson').html(contactPerson);
+            $('#contactno').html(contactno);
+            $('#email').html(email);
+            $('#productInfo').html(product);
+            $('#LeadId').val(LeadId);
+
+            $('#reassignLeadModal2').modal('show');
+
+
+
+
+
+
+
+            $("#btnReassign").click(function (ev) {
+                ev.preventDefault();
+                // $("#userloginform").validate();
+
+                var agentId = $('select[name="agentId"]').val();
+                if (agentId == '' || agentId == undefined) {
+                    $('.agentError').html('Please select agent');
+                    return false;
+                } else {
+                    $('.agentError').html('');
+                }
+
+                // alert('re assign');
+                var selectLeadId = $('#LeadId').val();
+                //  alert(selectLeadId);
+
+                $.ajax({
+                    url: '/admin/transferLead/',
+                    // data: { 'assigObj': postData },
+                    data: JSON.stringify({ agentId: '' + agentId + '', LeadId: '' + selectLeadId + '' }),
+
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        setTimeout(location.reload.bind(location), 1);
+
+                        // console.log(data);
+
+                    },
+                    error: function (request, error) {
+                        alert("something error occure");
+
+
+
+                    }
+                });
+
+            });
+
+
+
+
+
+
+        });
+
+
+
+
+        $(".leadGenerate").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Click For Lead Generate ');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
+
+
+        $(".leadBacktransfer").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Click For Lead Transfer ');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
+
+
+        $(".showdetail").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Show Details ');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
+        $(".showleadsheetstaus").hover(function () {
+            $(this).css('cursor', 'pointer').attr('title', 'Show Details ');
+        }, function () {
+            $(this).css('cursor', 'auto');
+        });
+
+    });
+
+
 </script>

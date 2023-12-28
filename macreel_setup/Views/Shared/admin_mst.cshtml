@@ -175,45 +175,45 @@
 
                     <a class="nav-link" data-toggle="dropdown" href="#">
                         <i class="far fa-bell"></i>
-                      @*  <span class="badge badge-warning navbar-badge">@ViewBag.todayfollowupsCount</span>*@
-                 @*   <span class="badge badge-warning navbar-badge">@ViewBag.todayfollowupsCount</span>*@
-                  <span class="badge badge-warning navbar-badge" id="nextfollowNotification"></span>
+                        @*  <span class="badge badge-warning navbar-badge">@ViewBag.todayfollowupsCount</span>*@
+                        @*   <span class="badge badge-warning navbar-badge">@ViewBag.todayfollowupsCount</span>*@
+                        <span class="badge badge-warning navbar-badge" id="nextfollowNotification"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         @*<span class="dropdown-item dropdown-header">15 Notifications</span>*@
                         <div class="dropdown-divider"></div>
                         <ul id="todayfollowuplist"></ul>
                         @*<ul>
-                            @foreach (var todayfollowup in ViewBag.todayfollowuplist as List<macreel_setup.Models.admin.manage_folloupLeadResponse>)
-                            {
+                                @foreach (var todayfollowup in ViewBag.todayfollowuplist as List<macreel_setup.Models.admin.manage_folloupLeadResponse>)
+                                {
 
 
 
-                                <li>
-                                    <a href="/admin/FollowUpLeadResponse?id=@todayfollowup.LeadId" class="dropdown-item">
-                                        @todayfollowup.response
-                                      
-                                    </a>
-                                </li>
-                            }
-                        </ul>*@
+                                    <li>
+                                        <a href="/admin/FollowUpLeadResponse?id=@todayfollowup.LeadId" class="dropdown-item">
+                                            @todayfollowup.response
+
+                                        </a>
+                                    </li>
+                                }
+                            </ul>*@
 
                         @*<a href="#" class="dropdown-item">
-                            <i class="fas fa-envelope mr-2"></i> 4 new messages
-                            <span class="float-right text-muted text-sm">3 mins</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-users mr-2"></i> 8 friend requests
-                            <span class="float-right text-muted text-sm">12 hours</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-file mr-2"></i> 3 new reports
-                            <span class="float-right text-muted text-sm">2 days</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>*@
+                                <i class="fas fa-envelope mr-2"></i> 4 new messages
+                                <span class="float-right text-muted text-sm">3 mins</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-users mr-2"></i> 8 friend requests
+                                <span class="float-right text-muted text-sm">12 hours</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-file mr-2"></i> 3 new reports
+                                <span class="float-right text-muted text-sm">2 days</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>*@
                     </div>
                 </li>
                 <li class="nav-item">
@@ -245,9 +245,10 @@
                         <img src="~/adminassets/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
-                        <p1 class="d-block">@Session["usertype"]</p1>
-                        <p1 class="d-block" id="loginbranch">@Session["loginuserbranch"]</p1>
                         <a href="#" class="d-block">@Session["username"]</a>
+
+                        <p1 class="d-block" style="color:white">@Session["usertype"]</p1>
+                        <p1 class="d-block" style="color:white" id="loginbranch">@Session["loginuserbranch"]</p1>
                     </div>
                 </div>
 
@@ -358,10 +359,16 @@
                                             <p>Add Lead</p>
                                         </a>
                                     </li>
+                                    @*<li class="nav-item">
+                        <a href="/admin/view_lead" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>View Lead</p>
+                        </a>
+                    </li>*@
                                     <li class="nav-item">
-                                        <a href="/admin/view_lead" class="nav-link">
+                                        <a href="/admin/viewleadstatus" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>View Lead</p>
+                                            <p>Lead Status</p>
                                         </a>
                                     </li>
 
@@ -570,11 +577,11 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     @*<li class="nav-item">
-                                        <a href="/admin/add_quotation" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>add_quotation</p>
-                                        </a>
-                                    </li>*@
+                        <a href="/admin/add_quotation" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>add_quotation</p>
+                        </a>
+                    </li>*@
                                     <li class="nav-item">
                                         <a href="/admin/view_quotation" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
@@ -643,33 +650,38 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
-
+                                    <li class="nav-item">
+                                        <a href="/admin/viewleadsheetlist" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>View Assigned Lead & Generate </p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/view_assignedlead" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p> Follow UP Lead</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a href="/admin/addLeadManualyBySalesMan" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Add Lead</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="/admin/view_lead" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>View Lead</p>
-                                        </a>
-                                    </li>
+                                    @*<li class="nav-item">
+                        <a href="/admin/view_lead" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>View Lead</p>
+                        </a>
+                    </li>*@
 
                                     @*<li class="nav-item">
-                                        <a href="/admin/addleadsheet" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Upload LeadSheet</p>
-                                        </a>
-                                    </li>*@
+                        <a href="/admin/addleadsheet" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Upload LeadSheet</p>
+                        </a>
+                    </li>*@
 
-                                    <li class="nav-item">
-                                        <a href="/admin/viewleadsheetlist" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>view leadsheet list</p>
-                                        </a>
-                                    </li>
 
                                     <li class="nav-item">
                                         <a href="/admin/AssignLead" class="nav-link">
@@ -677,16 +689,40 @@
                                             <p>Assign Lead</p>
                                         </a>
                                     </li>
+
                                     <li class="nav-item">
                                         <a href="/admin/showAssignedLeadBySales" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>view assigned lead</p>
+                                            <p>View Assigned Lead & ReAssign</p>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
 
 
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-edit"></i>
+                                    <p>
+                                        Quotation Manager
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @*<li class="nav-item">
+                        <a href="/admin/add_quotation" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>add_quotation</p>
+                        </a>
+                    </li>*@
+                                    <li class="nav-item">
+                                        <a href="/admin/view_quotation" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>view_quotation</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
 
 
                         }
@@ -717,7 +753,13 @@
                                     <li class="nav-item">
                                         <a href="/admin/view_assignedlead" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>View Assigned Lead</p>
+                                            <p> Follow UP Lead</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/viewleadsheetlist" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>View Assigned Lead & Generate </p>
                                         </a>
                                     </li>
 
@@ -827,7 +869,7 @@
             type: 'GET',
             url: '/admin/next_followup_responseNotification/',
             success: function (data) {
-                
+
                 var todayfollowuplist = $('#todayfollowuplist');
 
                 todayfollowuplist.empty();
@@ -835,10 +877,10 @@
                 $('#nextfollowNotification').html(noticount);
 
                 data.todayfollowup.forEach(function (item) {
-                    todayfollowuplist.append('<li>   <a href="/admin/FollowUpLeadResponse?leadId='+item.LeadId+'&resId='+item.id+'" class="dropdown-item">' + item.response + '</a></li>'); // Assuming each item has a 'name' property
+                    todayfollowuplist.append('<li>   <a href="/admin/FollowUpLeadResponse?leadId=' + item.LeadId + '&resId=' + item.id + '" class="dropdown-item">' + item.response + '</a></li>'); // Assuming each item has a 'name' property
                 });
 
-               // console.log('Data sent successfully');
+                // console.log('Data sent successfully');
             },
             error: function (error) {
                 // Code to handle the error
