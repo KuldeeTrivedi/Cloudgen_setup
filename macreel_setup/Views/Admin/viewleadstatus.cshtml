@@ -20,9 +20,6 @@
 
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
-
-
-
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -275,7 +272,6 @@
 
                     var tableHTML = '';
                   //  alert(JSON.stringify(data));
-
                     $.each(data, function (index, item) {
                         tableHTML += '<tr>';
                         tableHTML += '<td>' + item.response + '</td>';
@@ -290,7 +286,6 @@
                         }
                         tableHTML += '</tr>';
                     });
-
 
                     $('#responsetable1 tbody').html(tableHTML);
 
